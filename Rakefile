@@ -939,10 +939,10 @@ BASH_SHELLS = "/etc/shells"
 desc "Install Bash configuration."
 task :bash do
   _, status = Open3.capture2e "grep '#{BASH_PATH}' '#{BASH_SHELLS}'"
-  if status != 0
+  unless status == 0
     sh %Q{sudo -u root bash -c "echo '#{BASH_PATH}' >> '#{BASH_SHELLS}'"}
   end
-  if ENV["SHELL"] != BASH_PATH
+  unless ENV["SHELL"] == BASH_PATH
     sh "chsh -s '#{BASH_PATH}' '#{USER}'"
   end
 end
