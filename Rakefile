@@ -715,11 +715,9 @@ task default: [
 
 # Command-Line Tools.
 
-# FIXME
-
 desc "Install Command-Line Tools."
 task "command-line-tools" do
-  sh "xcode-select --install"
+  sh "xcode-select --install 2> /dev/null"
 end
 
 # Packages.
