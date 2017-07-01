@@ -696,9 +696,13 @@ class String
   end
 end
 
-def install_file path, content
+def install_file path, content, mode: nil
   if ! File.exists?(path) || File.read(path) != content
+    puts "Install file #{path}"
     File.write path, content
+    unless mode.nil?
+      chmod mode, path
+    end
   end
 end
 
@@ -921,13 +925,14 @@ end
 
 # Laptop.
 
-# FIXME
-
-# #!/usr/bin/env bash
-# (cd … && rake $@)
+LAPTOP_PATH = "/usr/local/bin/laptop"
 
 desc "Install ‘laptop’ executable."
 task :laptop do
+  install_file LAPTOP_PATH, <<-LAPTOP, mode: "a+x"
+#!/usr/bin/env bash
+(cd '#{File.expand_path("..", __FILE__)}' && rake $@)
+LAPTOP
 end
 
 # Hosts.
