@@ -2,12 +2,57 @@
 
 require "yaml"
 require "open3"
+require "etc"
 
 ######################################################################################################
 #
-# Packages to install
+# Main
 
-PACKAGES = [
+desc "Install all features."
+task default: [
+  :laptop,
+  "command-line-tools",
+  :packages,
+  :compose,
+  :bash,
+  "inkscape-palettes",
+]
+
+######################################################################################################
+#
+# Laptop
+
+LAPTOP_PATH = "/usr/local/bin/laptop"
+
+desc "Install ‘laptop’ executable."
+task :laptop do
+  install_file LAPTOP_PATH, <<-LAPTOP do
+#!/usr/bin/env bash
+(cd '#{File.expand_path("..", __FILE__)}' && rake $@)
+LAPTOP
+    chmod "a+x", path
+  end
+end
+
+######################################################################################################
+#
+# Command-Line Tools
+
+desc "Install Command-Line Tools."
+task "command-line-tools" do
+  sh "xcode-select --install 2> /dev/null"
+end
+
+######################################################################################################
+#
+# Packages
+
+PACKAGES_HOMEBREW_TAPS = [
+  "caskroom/cask",
+  "caskroom/fonts",
+]
+
+PACKAGES_HOMEBREW = [
 
   # Filesystem.
 
@@ -254,99 +299,21 @@ PACKAGES = [
   [:cask, "font-nunito"],
 ]
 
-#################
-# Homebrew taps #
-#################
-
-HOMEBREW_TAPS = [
-  "caskroom/cask",
-  "caskroom/fonts",
-]
-
-#################
-# OPAM packages #
-#################
-
-OPAM_PACKAGES = [
+PACKAGES_OPAM = [
   "merlin",
   "ocp-indent",
   "utop",
 ]
 
-###################
-# Racket packages #
-###################
-
-RACKET_PACKAGES = [
+PACKAGES_RACKET = [
   "drracket-solarized",
   "pollen",
 ]
 
-###################
-# Python packages #
-###################
-
-PYTHON_PACKAGES = [
+PACKAGES_PYTHON = [
   "font-line",
   "pygments",
 ]
-
-#########################
-# General configuration #
-#########################
-
-USER  = "leafac"
-GROUP = "admin"
-HOME  = Dir.home
-
-####################
-# Helper functions #
-####################
-
-class Array
-  def quote_all
-    map { |tap| "'#{tap}'" }.join(" ")
-  end
-end
-
-class String
-  def to_command
-    gsub(/\n\s+/, " ").strip
-  end
-end
-
-def install_file path, content
-  if ! File.exists?(path) || File.read(path) != content
-    puts "Install file ‘#{path}’."
-    File.write path, content
-    yield if block_given?
-  end
-end
-
-#########
-# Tasks #
-#########
-
-# Main.
-
-desc "Install all features."
-task default: [
-  "command-line-tools",
-  :packages,
-  :compose,
-  :laptop,
-  :bash,
-  "inkscape-palettes",
-]
-
-# Command-Line Tools.
-
-desc "Install Command-Line Tools."
-task "command-line-tools" do
-  sh "xcode-select --install 2> /dev/null"
-end
-
-# Packages.
 
 desc "Install packages."
 task packages: [
@@ -365,7 +332,7 @@ namespace :packages do
        ] do
     installed_packages = (`brew list`.split("\n") +
                           `brew cask list`.split("\n")).map { |cask| cask.split(" ").first }
-    PACKAGES.each do |package_specification|
+    PACKAGES_HOMEBREW.each do |package_specification|
       package_specification = Array(package_specification)
       cask = ""
       if package_specification.first == :cask
@@ -374,7 +341,7 @@ namespace :packages do
       end
       package, *args = package_specification
       if ! installed_packages.include? package.split("/").last
-        sh "brew#{cask} install '#{package}' #{args.quote_all}"
+        sh "brew#{cask} install '#{package}' #{args.map { |tap| "'#{tap}'" }.join(" ")}"
       end
     end
   end
@@ -386,13 +353,13 @@ namespace :packages do
 
     file "/usr/local/bin/brew" do
       sh %Q{ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"}
-      sh "sudo chown -R '#{USER}':'#{GROUP}' '/usr/local'"
+      sh "sudo chown -R '#{Etc.getlogin}:staff' '/usr/local'"
     end
 
     desc "Install Homebrew taps."
     task :taps do
       homebrew_tapped_repositories = `brew tap`.split("\n")
-      HOMEBREW_TAPS.each do |homebrew_tap|
+      PACKAGES_HOMEBREW_TAPS.each do |homebrew_tap|
         if ! homebrew_tapped_repositories.include? homebrew_tap
           sh "brew tap '#{homebrew_tap}'"
         end
@@ -403,7 +370,7 @@ namespace :packages do
   desc "Install Opam packages."
   task opam: [:homebrew] do
     installed_opam_packages = `opam list --short`.split("\n")
-    OPAM_PACKAGES.each do |opam_package|
+    PACKAGES_OPAM.each do |opam_package|
       if ! installed_opam_packages.include? opam_package
         sh "opam install --yes '#{opam_package}'"
       end
@@ -421,7 +388,7 @@ namespace :packages do
                                     racket_package.strip.split(/\s+/).first
                                   }
                                 end
-    RACKET_PACKAGES.each do |racket_package|
+    PACKAGES_RACKET.each do |racket_package|
       if ! installed_racket_packages.include? racket_package
         sh "raco pkg install --auto '#{racket_package}'"
       end
@@ -436,7 +403,7 @@ namespace :packages do
                                     python_package.strip.split(/\s+/).first.downcase
                                   }
                                 end
-    PYTHON_PACKAGES.each do |python_package|
+    PACKAGES_PYTHON.each do |python_package|
       if ! installed_python_packages.include? python_package
         sh "pip install '#{python_package}'"
       end
@@ -781,7 +748,7 @@ COMPOSE_MAPPINGS = {
     },
   },
 }
-COMPOSE_PATH = "#{HOME}/Library/KeyBindings"
+COMPOSE_PATH = "#{Dir.home}/Library/KeyBindings"
 COMPOSE_FILE = "#{COMPOSE_PATH}/DefaultKeyBinding.dict"
 
 desc "Install ‘compose’."
@@ -867,20 +834,6 @@ task compose: COMPOSE_PATH do
   end
 end
 
-# Laptop.
-
-LAPTOP_PATH = "/usr/local/bin/laptop"
-
-desc "Install ‘laptop’ executable."
-task :laptop do
-  install_file LAPTOP_PATH, <<-LAPTOP do
-#!/usr/bin/env bash
-(cd '#{File.expand_path("..", __FILE__)}' && rake $@)
-LAPTOP
-    chmod "a+x", path
-  end
-end
-
 # Hosts.
 
 HOSTS_REMOTE = "http://someonewhocares.org/hosts/hosts"
@@ -929,8 +882,8 @@ task :bash do
   unless status == 0
     sh %Q{sudo -u root bash -c "echo '#{BASH_PATH}' >> '#{BASH_SHELLS}'"}
   end
-  unless ENV["SHELL"] == BASH_PATH
-    sh "chsh -s '#{BASH_PATH}' '#{USER}'"
+  unless Etc.getpwuid.shell == BASH_PATH
+    sh "chsh -s '#{BASH_PATH}' '#{Etc.getlogin}'"
   end
 end
 
@@ -1187,5 +1140,23 @@ namespace :backup do
       abort "Failed to unlock remote credentials."
     end
     YAML.load output
+  end
+end
+
+######################################################################################################
+#
+# Helpers
+
+class String
+  def to_command
+    gsub(/\n\s+/, " ").strip
+  end
+end
+
+def install_file path, content
+  if ! File.exists?(path) || File.read(path) != content
+    puts "Install file ‘#{path}’."
+    File.write path, content
+    yield if block_given?
   end
 end
