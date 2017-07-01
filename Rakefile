@@ -941,47 +941,6 @@ end
 
 ######################################################################################################
 #
-# Hosts
-
-HOSTS_REMOTE = "http://someonewhocares.org/hosts/hosts"
-HOSTS_LOCAL = "/etc/hosts"
-
-desc "Update ‘#{HOSTS_LOCAL}’."
-task :hosts do
-  sh %Q{sudo -u root bash -c "curl -L '#{HOSTS_REMOTE}' > '#{HOSTS_LOCAL}'"}
-  puts <<-REQUIRED_ENTRIES
-Inspect required entries:
-
-  127.0.0.1 localhost
-  255.255.255.255 broadcasthost
-  ::1 localhost
-REQUIRED_ENTRIES
-  STDIN.gets
-  sh "less '#{HOSTS_LOCAL}'"
-end
-
-######################################################################################################
-#
-# GUI ‘$PATH’
-
-GUI_PATH_PATHS = [
-  "/usr/local/bin",
-  "/usr/bin",
-  "/bin",
-  "/usr/sbin",
-  "/sbin",
-  "/opt/X11/bin",
-  "/Library/TeX/texbin",
-]
-
-desc "Fix ‘$PATH’ environment variable for GUI applications."
-task "gui-path" do
-  sh "sudo launchctl config user path '#{GUI_PATH_PATHS.join ":"}'"
-  puts %Q{Reboot and test in DrRacket with ‘(getenv "PATH")’.}
-end
-
-######################################################################################################
-#
 # Backup.
 
 BACKUP_LAPTOP = "/Users/leafac"
@@ -1151,6 +1110,47 @@ namespace :backup do
     end
     YAML.load output
   end
+end
+
+######################################################################################################
+#
+# Hosts
+
+HOSTS_REMOTE = "http://someonewhocares.org/hosts/hosts"
+HOSTS_LOCAL = "/etc/hosts"
+
+desc "Update ‘#{HOSTS_LOCAL}’."
+task :hosts do
+  sh %Q{sudo -u root bash -c "curl -L '#{HOSTS_REMOTE}' > '#{HOSTS_LOCAL}'"}
+  puts <<-REQUIRED_ENTRIES
+Inspect required entries:
+
+  127.0.0.1 localhost
+  255.255.255.255 broadcasthost
+  ::1 localhost
+REQUIRED_ENTRIES
+  STDIN.gets
+  sh "less '#{HOSTS_LOCAL}'"
+end
+
+######################################################################################################
+#
+# GUI ‘$PATH’
+
+GUI_PATH_PATHS = [
+  "/usr/local/bin",
+  "/usr/bin",
+  "/bin",
+  "/usr/sbin",
+  "/sbin",
+  "/opt/X11/bin",
+  "/Library/TeX/texbin",
+]
+
+desc "Fix ‘$PATH’ environment variable for GUI applications."
+task "gui-path" do
+  sh "sudo launchctl config user path '#{GUI_PATH_PATHS.join ":"}'"
+  puts %Q{Reboot and test in DrRacket with ‘(getenv "PATH")’.}
 end
 
 ######################################################################################################
