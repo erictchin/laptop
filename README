@@ -1,0 +1,44 @@
+Laptop
+------
+
+Configuration for Leandro Facchinetti’s personal machine.
+
+
+DOCUMENTATION
+
+https://www.leafac.com/projects/laptop
+
+
+LICENSE
+
+GNU General Public License Version 3
+https://gnu.org/licenses/gpl-3.0.txt
+
+
+CODE OF CONDUCT
+
+Contributor Covenant v1.4.0
+http://contributor-covenant.org/version/1/4/
+
+
+SOURCE
+
+https://git.leafac.com/laptop
+
+
+BUG REPORTS
+
+Write emails to <laptop@leafac.com>.
+
+
+CONTRIBUTIONS
+
+Send patches (https://git-scm.com/docs/git-format-patch) and pull requests
+(https://git-scm.com/docs/git-request-pull) via email to <laptop@leafac.com>.
+
+
+AUTHOR
+
+Leandro Facchinetti <me@leafac.com>
+https://www.leafac.com
+GPG: 0x5925D0683DF3D583
