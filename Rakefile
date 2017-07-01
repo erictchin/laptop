@@ -634,19 +634,6 @@ PYTHON_PACKAGES = [
   "pygments",
 ]
 
-##############################
-# Paths for GUI applications #
-##############################
-
-PATH_PATHS = [
-  "/usr/local/bin",
-  "/usr/bin",
-  "/bin",
-  "/usr/sbin",
-  "/sbin",
-  "/opt/X11/bin:/Library/TeX/texbin"
-]
-
 #########################
 # General configuration #
 #########################
@@ -722,7 +709,6 @@ task default: [
   :packages,
   :compose,
   :laptop,
-  :path,
   :bash,
   "inkscape-palettes",
 ]
@@ -941,28 +927,39 @@ end
 
 # Hosts.
 
-# Required entries:
-#
-#   127.0.0.1 localhost
-#   255.255.255.255 broadcasthost
-#   ::1 localhost
-
 HOSTS_REMOTE = "http://someonewhocares.org/hosts/hosts"
 HOSTS_LOCAL = "/etc/hosts"
 
 desc "Update ‘#{HOSTS_LOCAL}’."
 task :hosts do
   sh %Q{sudo -u root bash -c "curl -L '#{HOSTS_REMOTE}' > '#{HOSTS_LOCAL}'"}
+  puts <<-REQUIRED_ENTRIES
+Inspect required entries:
+
+  127.0.0.1 localhost
+  255.255.255.255 broadcasthost
+  ::1 localhost
+REQUIRED_ENTRIES
+  STDIN.gets
   sh "less '#{HOSTS_LOCAL}'"
 end
 
-# Path.
+# GUI ‘$PATH’.
 
-# FIXME
+GUI_PATH_PATHS = [
+  "/usr/local/bin",
+  "/usr/bin",
+  "/bin",
+  "/usr/sbin",
+  "/sbin",
+  "/opt/X11/bin",
+  "/Library/TeX/texbin",
+]
 
-desc "Fix path for GUI applications."
-task :path do
-  sh "sudo launchctl config user path '#{PATH_PATHS.join ":"}'"
+desc "Fix ‘$PATH’ environment variable for GUI applications."
+task "gui-path" do
+  sh "sudo launchctl config user path '#{GUI_PATH_PATHS.join ":"}'"
+  puts %Q{Reboot and test in DrRacket with ‘(getenv "PATH")’.}
 end
 
 # Bash.
