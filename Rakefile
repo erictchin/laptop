@@ -317,7 +317,7 @@ end
 
 def install_file path, content
   if ! File.exists?(path) || File.read(path) != content
-    puts "Install file #{path}"
+    puts "Install file ‘#{path}’."
     File.write path, content
     yield if block_given?
   end
@@ -443,8 +443,6 @@ namespace :packages do
     end
   end
 end
-
-
 
 ######################################################################################################
 #
@@ -801,13 +799,13 @@ task compose: COMPOSE_PATH do
       if pivot.empty?
         compose_decompose node_child_pivot
       else
-        pivot_first, _ = combination_split pivot
+        pivot_first, _ = compose_combination_split pivot
         included, rest = node.partition { |(combination, _)|
-          combination_first, _ = combination_split combination
+          combination_first, _ = compose_combination_split combination
           combination_first == pivot_first
         }
         included = included.map { |(combination, node_child)|
-          _, combination_rest = combination_split combination
+          _, combination_rest = compose_combination_split combination
           [combination_rest, node_child]
         }
         included = Hash[included]
@@ -824,21 +822,21 @@ task compose: COMPOSE_PATH do
     when String then %Q{("insertText:","#{node}")}
     when Hash
       "{" +
-        node.map { |(combination, node_child)| %Q{"#{combination}"=#{compose_to_s node_child};}}.join +
-        "}"
+      node.map { |(combination, node_child)| %Q{"#{combination}"=#{compose_to_s node_child};} }.join +
+      "}"
     end
   end
 
-  def combination_split combination
+  def compose_combination_split combination
     combination_first, combination_rest =
-                       if %w{~ $ ^ @ #}.include? combination[0]
-                         combination_first, combination_rest = combination[1..-1]
-                         [combination[0] + combination_first, combination_rest]
-                       elsif combination[0..1] == '\\U'
-                         [combination[0..5], combination[6..-1]]
-                       else
-                         [combination[0], combination[1..-1]]
-                       end
+      if %w{~ $ ^ @ #}.include? combination[0]
+        combination_first, combination_rest = combination[1..-1]
+        [combination[0] + combination_first, combination_rest]
+      elsif combination[0..1] == '\\U'
+        [combination[0..5], combination[6..-1]]
+      else
+        [combination[0], combination[1..-1]]
+      end
     [combination_first, combination_rest || ""]
   end
 
