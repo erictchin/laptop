@@ -941,15 +941,19 @@ end
 
 # Hosts.
 
-# FIXME
+# Required entries:
+#
+#   127.0.0.1 localhost
+#   255.255.255.255 broadcasthost
+#   ::1 localhost
 
-# 127.0.0.1 localhost
-# 255.255.255.255 broadcasthost
-# ::1             localhost
+HOSTS_REMOTE = "http://someonewhocares.org/hosts/hosts"
+HOSTS_LOCAL = "/etc/hosts"
 
-desc "Download latest version of hosts file."
+desc "Update ‘#{HOSTS_LOCAL}’."
 task :hosts do
-  sh "sudo curl -L 'http://someonewhocares.org/hosts/hosts' > /etc/hosts"
+  sh %Q{sudo -u root bash -c "curl -L '#{HOSTS_REMOTE}' > '#{HOSTS_LOCAL}'"}
+  sh "less '#{HOSTS_LOCAL}'"
 end
 
 # Path.
@@ -970,7 +974,7 @@ desc "Install Bash configuration."
 task :bash do
   _, status = Open3.capture2e "grep '#{BASH_PATH}' '#{BASH_SHELLS}'"
   if status != 0
-    sh %Q{sudo -u root bash -c "echo '#{BASH_PATH}' >> #{BASH_SHELLS}"}
+    sh %Q{sudo -u root bash -c "echo '#{BASH_PATH}' >> '#{BASH_SHELLS}'"}
   end
   if ENV["SHELL"] != BASH_PATH
     sh "chsh -s '#{BASH_PATH}' '#{USER}'"
