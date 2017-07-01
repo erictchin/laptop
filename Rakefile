@@ -3,9 +3,9 @@
 require "yaml"
 require "open3"
 
-#######################
-# Packages to install #
-#######################
+######################################################################################################
+#
+# Packages to install
 
 PACKAGES = [
 
@@ -254,11 +254,201 @@ PACKAGES = [
   [:cask, "font-nunito"],
 ]
 
-###########
-# Compose #
-###########
+#################
+# Homebrew taps #
+#################
 
-# http://xahlee.info/kbd/osx_keybinding_key_syntax.html
+HOMEBREW_TAPS = [
+  "caskroom/cask",
+  "caskroom/fonts",
+]
+
+#################
+# OPAM packages #
+#################
+
+OPAM_PACKAGES = [
+  "merlin",
+  "ocp-indent",
+  "utop",
+]
+
+###################
+# Racket packages #
+###################
+
+RACKET_PACKAGES = [
+  "drracket-solarized",
+  "pollen",
+]
+
+###################
+# Python packages #
+###################
+
+PYTHON_PACKAGES = [
+  "font-line",
+  "pygments",
+]
+
+#########################
+# General configuration #
+#########################
+
+USER  = "leafac"
+GROUP = "admin"
+HOME  = Dir.home
+
+####################
+# Helper functions #
+####################
+
+class Array
+  def quote_all
+    map { |tap| "'#{tap}'" }.join(" ")
+  end
+end
+
+class String
+  def to_command
+    gsub(/\n\s+/, " ").strip
+  end
+end
+
+def install_file path, content
+  if ! File.exists?(path) || File.read(path) != content
+    puts "Install file #{path}"
+    File.write path, content
+    yield if block_given?
+  end
+end
+
+#########
+# Tasks #
+#########
+
+# Main.
+
+desc "Install all features."
+task default: [
+  "command-line-tools",
+  :packages,
+  :compose,
+  :laptop,
+  :bash,
+  "inkscape-palettes",
+]
+
+# Command-Line Tools.
+
+desc "Install Command-Line Tools."
+task "command-line-tools" do
+  sh "xcode-select --install 2> /dev/null"
+end
+
+# Packages.
+
+desc "Install packages."
+task packages: [
+  "packages:homebrew",
+  "packages:opam",
+  "packages:racket",
+  "packages:python",
+]
+
+namespace :packages do
+
+  desc "Install Homebrew packages."
+  task homebrew: [
+         "homebrew:install",
+         "homebrew:taps",
+       ] do
+    installed_packages = (`brew list`.split("\n") +
+                          `brew cask list`.split("\n")).map { |cask| cask.split(" ").first }
+    PACKAGES.each do |package_specification|
+      package_specification = Array(package_specification)
+      cask = ""
+      if package_specification.first == :cask
+        package_specification.shift
+        cask = " cask"
+      end
+      package, *args = package_specification
+      if ! installed_packages.include? package.split("/").last
+        sh "brew#{cask} install '#{package}' #{args.quote_all}"
+      end
+    end
+  end
+
+  namespace :homebrew do
+
+    desc "Install Homebrew."
+    task install: ["command-line-tools", "/usr/local/bin/brew"]
+
+    file "/usr/local/bin/brew" do
+      sh %Q{ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"}
+      sh "sudo chown -R '#{USER}':'#{GROUP}' '/usr/local'"
+    end
+
+    desc "Install Homebrew taps."
+    task :taps do
+      homebrew_tapped_repositories = `brew tap`.split("\n")
+      HOMEBREW_TAPS.each do |homebrew_tap|
+        if ! homebrew_tapped_repositories.include? homebrew_tap
+          sh "brew tap '#{homebrew_tap}'"
+        end
+      end
+    end
+  end
+
+  desc "Install Opam packages."
+  task opam: [:homebrew] do
+    installed_opam_packages = `opam list --short`.split("\n")
+    OPAM_PACKAGES.each do |opam_package|
+      if ! installed_opam_packages.include? opam_package
+        sh "opam install --yes '#{opam_package}'"
+      end
+    end
+  end
+
+  desc "Install Racket packages."
+  task racket: [:homebrew] do
+    # FIXME: The output of `raco pkg show' is not only the package names. So
+    # this is list is not 100% accurate, but is a good enough approximation for
+    # now.
+    installed_racket_packages = begin
+                                  `raco pkg show`.split("\n")
+                                    .map { |racket_package|
+                                    racket_package.strip.split(/\s+/).first
+                                  }
+                                end
+    RACKET_PACKAGES.each do |racket_package|
+      if ! installed_racket_packages.include? racket_package
+        sh "raco pkg install --auto '#{racket_package}'"
+      end
+    end
+  end
+
+  desc "Install Python packages."
+  task python: [:homebrew] do
+    installed_python_packages = begin
+                                  `pip list --format=legacy`.split("\n")
+                                    .map { |python_package|
+                                    python_package.strip.split(/\s+/).first.downcase
+                                  }
+                                end
+    PYTHON_PACKAGES.each do |python_package|
+      if ! installed_python_packages.include? python_package
+        sh "pip install '#{python_package}'"
+      end
+    end
+  end
+end
+
+
+
+######################################################################################################
+#
+# Compose
 
 # Prefix   Meaning
 # ~        ⌥ Option key
@@ -312,9 +502,10 @@ PACKAGES = [
 # Find                       \\UF745
 # Help                       \\UF746
 
-COMPOSE = {
+# http://xahlee.info/kbd/osx_keybinding_key_syntax.html
+
+COMPOSE_MAPPINGS = {
   "~a" => {
-    # https://docs.racket-lang.org/drracket/Keyboard_Shortcuts.html
     "$\\UF701" => "⇓",
     "Downarrow" => "⇓",
     "nwarrow" => "↖",
@@ -538,13 +729,9 @@ COMPOSE = {
     "leftfloor" => "⌊",
     "]" => "⌋",
     "rightfloor" => "⌋",
-
-    # macOS keys.
     "option" => "⌥",
     "shift" => "⇧",
     "command" => "⌘",
-
-    # http://unicode.org/charts/PDF/U2070.pdf
     "_" => {
       "0" => "₀",
       "1" => "₁",
@@ -594,211 +781,14 @@ COMPOSE = {
       "k" => "ᵏ",
       "n" => "ⁿ",
     },
-  }
+  },
 }
-
-#################
-# Homebrew taps #
-#################
-
-HOMEBREW_TAPS = [
-  "caskroom/cask",
-  "caskroom/fonts",
-]
-
-#################
-# OPAM packages #
-#################
-
-OPAM_PACKAGES = [
-  "merlin",
-  "ocp-indent",
-  "utop",
-]
-
-###################
-# Racket packages #
-###################
-
-RACKET_PACKAGES = [
-  "drracket-solarized",
-  "pollen",
-]
-
-###################
-# Python packages #
-###################
-
-PYTHON_PACKAGES = [
-  "font-line",
-  "pygments",
-]
-
-#########################
-# General configuration #
-#########################
-
-USER  = "leafac"
-GROUP = "admin"
-HOME  = Dir.home
-
-####################
-# Helper functions #
-####################
-
-class Array
-  def quote_all
-    map { |tap| "'#{tap}'" }.join(" ")
-  end
-end
-
-class String
-  def to_command
-    gsub(/\n\s+/, " ").strip
-  end
-end
-
-def install_file path, content, mode: nil
-  if ! File.exists?(path) || File.read(path) != content
-    puts "Install file #{path}"
-    File.write path, content
-    unless mode.nil?
-      chmod mode, path
-    end
-  end
-end
-
-#########
-# Tasks #
-#########
-
-# Main.
-
-desc "Install all features."
-task default: [
-  "command-line-tools",
-  :packages,
-  :compose,
-  :laptop,
-  :bash,
-  "inkscape-palettes",
-]
-
-# Command-Line Tools.
-
-desc "Install Command-Line Tools."
-task "command-line-tools" do
-  sh "xcode-select --install 2> /dev/null"
-end
-
-# Packages.
-
-desc "Install packages."
-task packages: [
-  "packages:homebrew",
-  "packages:opam",
-  "packages:racket",
-  "packages:python",
-]
-
-namespace :packages do
-
-  desc "Install Homebrew packages."
-  task homebrew: [
-         "homebrew:install",
-         "homebrew:taps",
-       ] do
-    installed_packages = (`brew list`.split("\n") +
-                          `brew cask list`.split("\n")).map { |cask| cask.split(" ").first }
-    PACKAGES.each do |package_specification|
-      package_specification = Array(package_specification)
-      cask = ""
-      if package_specification.first == :cask
-        package_specification.shift
-        cask = " cask"
-      end
-      package, *args = package_specification
-      if ! installed_packages.include? package.split("/").last
-        sh "brew#{cask} install '#{package}' #{args.quote_all}"
-      end
-    end
-  end
-
-  namespace :homebrew do
-
-    desc "Install Homebrew."
-    task install: ["command-line-tools", "/usr/local/bin/brew"]
-
-    file "/usr/local/bin/brew" do
-      sh %Q{ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"}
-      sh "sudo chown -R '#{USER}':'#{GROUP}' '/usr/local'"
-    end
-
-    desc "Install Homebrew taps."
-    task :taps do
-      homebrew_tapped_repositories = `brew tap`.split("\n")
-      HOMEBREW_TAPS.each do |homebrew_tap|
-        if ! homebrew_tapped_repositories.include? homebrew_tap
-          sh "brew tap '#{homebrew_tap}'"
-        end
-      end
-    end
-  end
-
-  desc "Install Opam packages."
-  task opam: [:homebrew] do
-    installed_opam_packages = `opam list --short`.split("\n")
-    OPAM_PACKAGES.each do |opam_package|
-      if ! installed_opam_packages.include? opam_package
-        sh "opam install --yes '#{opam_package}'"
-      end
-    end
-  end
-
-  desc "Install Racket packages."
-  task racket: [:homebrew] do
-    # FIXME: The output of `raco pkg show' is not only the package names. So
-    # this is list is not 100% accurate, but is a good enough approximation for
-    # now.
-    installed_racket_packages = begin
-                                  `raco pkg show`.split("\n")
-                                    .map { |racket_package|
-                                    racket_package.strip.split(/\s+/).first
-                                  }
-                                end
-    RACKET_PACKAGES.each do |racket_package|
-      if ! installed_racket_packages.include? racket_package
-        sh "raco pkg install --auto '#{racket_package}'"
-      end
-    end
-  end
-
-  desc "Install Python packages."
-  task python: [:homebrew] do
-    installed_python_packages = begin
-                                  `pip list --format=legacy`.split("\n")
-                                    .map { |python_package|
-                                    python_package.strip.split(/\s+/).first.downcase
-                                  }
-                                end
-    PYTHON_PACKAGES.each do |python_package|
-      if ! installed_python_packages.include? python_package
-        sh "pip install '#{python_package}'"
-      end
-    end
-  end
-end
-
-# Compose.
+COMPOSE_PATH = "#{HOME}/Library/KeyBindings"
+COMPOSE_FILE = "#{COMPOSE_PATH}/DefaultKeyBinding.dict"
 
 desc "Install ‘compose’."
 
-task compose: ["#{HOME}/Library/KeyBindings",
-               "#{HOME}/Library/KeyBindings/DefaultKeyBinding.dict"]
-
-directory "#{HOME}/Library/KeyBindings"
-
-file "#{HOME}/Library/KeyBindings/DefaultKeyBinding.dict" => __FILE__ do
+task compose: COMPOSE_PATH do
   def compose_render node
     compose_to_s(compose_decompose(node))
   end
@@ -852,33 +842,30 @@ file "#{HOME}/Library/KeyBindings/DefaultKeyBinding.dict" => __FILE__ do
     [combination_first, combination_rest || ""]
   end
 
-  def combination_all_combinations node
+  def compose_combination_all_combinations node
     case node
     when String then [""]
     when Hash
       node.map { |(combination, node_child)|
-        combination_all_combinations(node_child)
+        compose_combination_all_combinations(node_child)
           .map { |node_child_combination| combination + node_child_combination }
       }.reduce(:+)
     end
   end
 
-  def combination_ambiguous_prefixes combinations
+  def compose_combination_ambiguous_prefixes combinations
     combinations.product(combinations).select { |(combination_1, combination_2)|
       combination_1 != combination_2 && combination_2.start_with?(combination_1)
     }
   end
 
-  ambiguous_prefixes = combination_ambiguous_prefixes(combination_all_combinations(COMPOSE))
+  ambiguous_prefixes = compose_combination_ambiguous_prefixes(compose_combination_all_combinations(COMPOSE_MAPPINGS))
   if ambiguous_prefixes.any?
     abort "Compose: The following combinations are ambiguous prefixes: #{ambiguous_prefixes}"
   end
 
-  rendered = compose_render(COMPOSE)
-  if ! File.exists?("#{HOME}/Library/KeyBindings/DefaultKeyBinding.dict") ||
-     File.read("#{HOME}/Library/KeyBindings/DefaultKeyBinding.dict") != rendered
-    File.write("#{HOME}/Library/KeyBindings/DefaultKeyBinding.dict", rendered)
-    puts "Compose: Reopen applications for new compose combinations to take effect."
+  install_file COMPOSE_FILE, compose_render(COMPOSE_MAPPINGS) do
+    puts "Reopen applications for new compose combinations to take effect."
   end
 end
 
@@ -888,10 +875,12 @@ LAPTOP_PATH = "/usr/local/bin/laptop"
 
 desc "Install ‘laptop’ executable."
 task :laptop do
-  install_file LAPTOP_PATH, <<-LAPTOP, mode: "a+x"
+  install_file LAPTOP_PATH, <<-LAPTOP do
 #!/usr/bin/env bash
 (cd '#{File.expand_path("..", __FILE__)}' && rake $@)
 LAPTOP
+    chmod "a+x", path
+  end
 end
 
 # Hosts.
