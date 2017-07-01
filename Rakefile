@@ -1,4 +1,8 @@
 # coding: utf-8
+
+require "yaml"
+require "open3"
+
 #######################
 # Packages to install #
 #######################
@@ -959,12 +963,18 @@ end
 
 # Bash.
 
-# TODO: Check ‘/etc/shells’ and current user shell.
+BASH_PATH = "/usr/local/bin/bash"
+BASH_SHELLS = "/etc/shells"
 
 desc "Install Bash configuration."
 task :bash do
-  sh %Q{sudo -u root bash -c "echo '/usr/local/bin/bash' >> /etc/shells"}
-  sh "chsh -s '/usr/local/bin/bash' #{USER}"
+  _, status = Open3.capture2e "grep '#{BASH_PATH}' '#{BASH_SHELLS}'"
+  if status != 0
+    sh %Q{sudo -u root bash -c "echo '#{BASH_PATH}' >> #{BASH_SHELLS}"}
+  end
+  if ENV["SHELL"] != BASH_PATH
+    sh "chsh -s '#{BASH_PATH}' '#{USER}'"
+  end
 end
 
 # Inkscape palettes.
@@ -1053,9 +1063,6 @@ file INKSCAPE_PALETTES_PATH do
 end
 
 # Backup.
-
-require "yaml"
-require "open3"
 
 desc "Backup laptop, storage and ‘leafac.com’."
 task backup: ["backup:laptop", "backup:storage", "backup:leafac.com"]
