@@ -834,7 +834,9 @@ task compose: COMPOSE_PATH do
   end
 end
 
-# Hosts.
+######################################################################################################
+#
+# Hosts
 
 HOSTS_REMOTE = "http://someonewhocares.org/hosts/hosts"
 HOSTS_LOCAL = "/etc/hosts"
@@ -853,7 +855,9 @@ REQUIRED_ENTRIES
   sh "less '#{HOSTS_LOCAL}'"
 end
 
-# GUI ‘$PATH’.
+######################################################################################################
+#
+# GUI ‘$PATH’
 
 GUI_PATH_PATHS = [
   "/usr/local/bin",
@@ -871,7 +875,9 @@ task "gui-path" do
   puts %Q{Reboot and test in DrRacket with ‘(getenv "PATH")’.}
 end
 
-# Bash.
+######################################################################################################
+#
+# Bash
 
 BASH_PATH = "/usr/local/bin/bash"
 BASH_SHELLS = "/etc/shells"
@@ -887,7 +893,9 @@ task :bash do
   end
 end
 
-# Inkscape palettes.
+######################################################################################################
+#
+# Inkscape Palettes.
 
 INKSCAPE_PALETTES = {
   solarized: <<-PALETTE,
@@ -972,6 +980,8 @@ file INKSCAPE_PALETTES_PATH do
   abort "Failed to find folder for Inkscape palettes at ‘#{INKSCAPE_PALETTES_PATH}’. Is Inkscape installed?"
 end
 
+######################################################################################################
+#
 # Backup.
 
 BACKUP_LAPTOP = "/Users/leafac"
@@ -1145,7 +1155,7 @@ end
 
 ######################################################################################################
 #
-# Helpers
+# Auxiliary
 
 class String
   def to_command
