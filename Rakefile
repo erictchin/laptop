@@ -66,7 +66,6 @@ PACKAGES = [
   [:cask, "cool-retro-term"],
   [:cask, "free-ruler"],
   [:cask, "unicodechecker"],
-  [:cask, "lingo"],
   [:cask, "xquartz"],
 
   # Drivers.
