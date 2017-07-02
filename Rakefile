@@ -373,25 +373,20 @@ namespace :packages do
 
   desc "Install OCaml packages."
   task ocaml: [:homebrew] do
-    installed_ocaml_packages = `ocaml list --short`.split("\n")
+    installed_ocaml_packages = `opam list --short`.split("\n")
     PACKAGES_OCAML.each do |ocaml_package|
       if ! installed_ocaml_packages.include? ocaml_package
-        sh "ocaml install --yes '#{ocaml_package}'"
+        sh "opam install --yes '#{ocaml_package}'"
       end
     end
   end
 
   desc "Install Racket packages."
   task racket: [:homebrew] do
-    # FIXME: The output of `raco pkg show' is not only the package names. So
-    # this is list is not 100% accurate, but is a good enough approximation for
-    # now.
-    installed_racket_packages = begin
-                                  `raco pkg show`.split("\n")
-                                    .map { |racket_package|
-                                    racket_package.strip.split(/\s+/).first
-                                  }
-                                end
+    installed_racket_packages =
+      `raco pkg show --user`.split("\n").map { |racket_package|
+        racket_package.strip.split(/\s+/).first
+      }
     PACKAGES_RACKET.each do |racket_package|
       if ! installed_racket_packages.include? racket_package
         sh "raco pkg install --auto '#{racket_package}'"
@@ -401,12 +396,10 @@ namespace :packages do
 
   desc "Install Python packages."
   task python: [:homebrew] do
-    installed_python_packages = begin
-                                  `pip list --format=legacy`.split("\n")
-                                    .map { |python_package|
-                                    python_package.strip.split(/\s+/).first.downcase
-                                  }
-                                end
+    installed_python_packages =
+      `pip list --format=legacy`.split("\n").map { |python_package|
+        python_package.strip.split(/\s+/).first.downcase
+      }
     PACKAGES_PYTHON.each do |python_package|
       if ! installed_python_packages.include? python_package
         sh "pip install '#{python_package}'"
