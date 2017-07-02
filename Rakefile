@@ -952,6 +952,7 @@ BACKUP_LAPTOP_EXCLUDES = [
   "/Library/Containers/com.docker.docker/",
 ]
 BACKUP_STORAGE = "/Volumes/leafac-flash-drive/storage"
+BACKUP_STORAGE_LAPTOP = "#{BACKUP_STORAGE}/laptop"
 BACKUP_REMOTE = "s3+http://backup.leafac.com/storage"
 BACKUP_REMOTE_CREDENTIALS = <<-CREDENTIALS
 -----BEGIN PGP MESSAGE-----
@@ -979,7 +980,7 @@ namespace :backup do
             --progress
             #{BACKUP_LAPTOP_EXCLUDES.map { |exclude| "--exclude '#{exclude}'" }.join(" ") }
             '#{BACKUP_LAPTOP}/'
-            '#{BACKUP_STORAGE}/laptop/'
+            '#{BACKUP_STORAGE_LAPTOP}/'
     COMMAND
   end
 
