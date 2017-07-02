@@ -352,8 +352,8 @@ namespace :packages do
     task install: ["command-line-tools", "/usr/local/bin/brew"]
 
     file "/usr/local/bin/brew" do
-      sh %Q{ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"}
-      sh "sudo chown -R '#{Etc.getlogin}:staff' '/usr/local'"
+      sh %Q{/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"}
+      sh "sudo chown -R '#{Etc.getlogin}:#{Etc.getgrgid(Etc.getpwuid.gid).name}' '/usr/local'"
     end
 
     desc "Install Homebrew taps."
