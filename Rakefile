@@ -55,43 +55,220 @@ PACKAGES_HOMEBREW_TAPS = [
   "caskroom/fonts",
 ]
 
-PACKAGES_HOMEBREW = [
+PACKAGES_HOMEBREW_CASK = [
 
   # Filesystem.
 
-  [:cask, "osxfuse"],
+  "osxfuse",
+  "android-file-transfer",
+
+  # Networking.
+
+  "transmission",
+  "wireshark",
+  "postman",
+
+  # Internet browsing.
+
+  "firefox",
+  "flash-npapi",
+  "google-chrome",
+
+  # Email.
+
+  "thunderbird",
+
+  # Instant messaging.
+
+  "skype",
+  "google-hangouts",
+  "mattermost",
+  "slack",
+
+  # Command-line utils.
+
+  "iterm2",
+
+  # Desktop utils.
+
+  "caffeine",
+  "shiftit",
+  "flux",
+  "the-unarchiver",
+  "grandperspective",
+  "licecap",
+  "keycastr",
+  "cool-retro-term",
+  "free-ruler",
+  "unicodechecker",
+  "xquartz",
+
+  # Drivers.
+
+  "darwiinremoteosc",
+
+  # Text editing.
+
+  "atom",
+  "emacs",
+
+  # Ebook management.
+
+  "calibre",
+
+  # Audio and video.
+
+  "ableton-live-lite",
+  "vlc",
+  "spotify",
+
+  # Graphs and diagrams.
+
+  "yed",
+
+  # Image editing.
+
+  "skitch",
+  # TODO: "inkscape", # https://inkscape.org/en/%7Etghs/%E2%98%85inkscape-0921-tghs_2-x11-107-x86_64dmg
+  "color-oracle",
+
+  # Font editing.
+
+  "fontforge",
+
+  # Virtualization.
+
+  "virtualbox",
+  "docker",
+
+  # Writing.
+
+  "mactex",
+  "skim",
+  "adobe-reader",
+  "detexify",
+  "microsoft-office",
+
+  # Programming languages.
+
+  ## Racket.
+
+  "racket",
+
+  ## Arduino.
+
+  "arduino",
+
+  # Fonts.
+
+  "font-fontawesome",
+  "font-meslo-lg",
+  "font-dejavu-sans",
+  "font-hack",
+  "font-charter",
+  "font-fantasque-sans-mono",
+  "font-input",
+  "font-linux-libertine",
+  "font-charis-sil",
+  "font-norwester",
+  "font-mononoki",
+  "font-hermit",
+  "font-bungee",
+  "font-eb-garamond",
+  "font-et-book",
+  "font-open-sans",
+  "font-open-sans-condensed",
+  "font-roboto",
+  "font-roboto-condensed",
+  "font-roboto-mono",
+  "font-roboto-slab",
+  "font-lato",
+  "font-oswald",
+  "font-source-code-pro",
+  "font-source-sans-pro",
+  "font-source-serif-pro",
+  "font-montserrat",
+  "font-raleway",
+  "font-pt-mono",
+  "font-pt-sans",
+  "font-pt-serif",
+  "font-lora",
+  "font-droid-sans",
+  "font-droid-sans-mono",
+  "font-droid-serif",
+  "font-ubuntu",
+  "font-merriweather",
+  "font-merriweather-sans",
+  "font-noto-sans",
+  "font-noto-emoji",
+  "font-noto-serif",
+  "font-inconsolata",
+  "font-alegreya",
+  "font-alegreya-sc",
+  "font-alegreya-sans",
+  "font-alegreya-sans-sc",
+  "font-exo",
+  "font-exo2",
+  "font-fira-code",
+  "font-fira-mono",
+  "font-fira-sans",
+  "font-crimson-text",
+  "font-vollkorn",
+  "font-andada",
+  "font-andada-sc",
+  "font-abril-fatface",
+  "font-cardo",
+  "font-gentium-basic",
+  "font-gentium-book-basic",
+  "font-gentium-plus",
+  "font-libre-baskerville",
+  "font-playfair-display",
+  "font-playfair-display-sc",
+  "font-gravitas-one",
+  "font-old-standard-tt",
+  "font-hasklig",
+  "font-monoid",
+  "font-monoisome",
+  "font-iosevka",
+  # TODO: "font-julius-sans-one",
+  "font-oxygen",
+  "font-oxygen-mono",
+  "font-bebas-neue",
+  "font-cabin",
+  "font-cabin-condensed",
+  "font-cabin-sketch",
+  "font-bitstream-vera",
+  # TODO: "font-bree-serif",
+  "font-junicode",
+  "font-overpass",
+  "font-rajdhani",
+  "font-tangerine",
+  "font-anonymous-pro",
+  "font-everson-mono",
+  "font-gnu-unifont",
+  # TODO: "font-andika",
+  "font-cooper-hewitt",
+  "font-nunito",
+]
+
+PACKAGES_HOMEBREW_HOMEBREW = [
+
+  # Filesystem.
+
   "bindfs",
   "sshfs",
   "ntfs-3g",
   "ext2fuse",
   "ext4fuse",
-  [:cask, "android-file-transfer"],
 
   # Networking.
 
   "nmap",
   "wget",
   "httpie",
-  [:cask, "transmission"],
-  [:cask, "wireshark"],
-  [:cask, "postman"],
-
-  # Internet browsing.
-
-  [:cask, "firefox"],
-  [:cask, "flash-npapi"],
-  [:cask, "google-chrome"],
-
-  # Instant messaging.
-
-  [:cask, "skype"],
-  [:cask, "google-hangouts"],
-  [:cask, "mattermost"],
-  [:cask, "slack"],
 
   # Command-line utils.
 
-  [:cask, "iterm2"],
   "coreutils",
   "bash",
   "git",
@@ -106,85 +283,27 @@ PACKAGES_HOMEBREW = [
   "watch",
   "rlwrap",
 
-  # Desktop utils.
-
-  [:cask, "caffeine"],
-  [:cask, "shiftit"],
-  [:cask, "flux"],
-  [:cask, "the-unarchiver"],
-  [:cask, "grandperspective"],
-  [:cask, "licecap"],
-  [:cask, "keycastr"],
-  [:cask, "cool-retro-term"],
-  [:cask, "free-ruler"],
-  [:cask, "unicodechecker"],
-  [:cask, "xquartz"],
-
-  # Drivers.
-
-  [:cask, "darwiinremoteosc"],
-
   # Encryption.
 
   "gnupg",
   "pinentry-mac",
 
-  # Text editing.
-
-  [:cask, "atom"],
-  [:cask, "emacs"],
-
-  # Ebook management.
-
-  [:cask, "calibre"],
-
-  # Audio and video.
-
-  [:cask, "ableton-live-lite"],
-  [:cask, "vlc"],
-  [:cask, "spotify"],
-
   # Graphs and diagrams.
 
   "graphviz",
-  [:cask, "yed"],
   "ditaa",
   "plantuml",
   "imagemagick",
 
-  # Image editing.
-
-  [:cask, "skitch"],
-  # TODO: [:cask, "inkscape"], # https://inkscape.org/en/%7Etghs/%E2%98%85inkscape-0921-tghs_2-x11-107-x86_64dmg
-  [:cask, "color-oracle"],
-
-  # Font editing.
-
-  [:cask, "fontforge"],
-
-  # Virtualization.
-
-  [:cask, "virtualbox"],
-  [:cask, "docker"],
-
   # Writing.
 
-  [:cask, "mactex"],
   "pandoc",
-  [:cask, "skim"],
-  [:cask, "adobe-reader"],
-  ["aspell", "--with-lang-en", "--with-lang-pt_BR"],
+  "aspell --with-lang-en --with-lang-pt_BR",
   "languagetool",
-  [:cask, "detexify"],
-  [:cask, "microsoft-office"],
 
   # Backup.
 
   "duplicity",
-
-  # Email.
-
-  [:cask, "thunderbird"],
 
   # Password generation.
 
@@ -192,18 +311,10 @@ PACKAGES_HOMEBREW = [
 
   # Programming languages.
 
-  ## Racket.
-
-  [:cask ,"racket"],
-
   ## Go.
 
   "go",
   "glide",
-
-  ## Arduino.
-
-  [:cask, "arduino"],
 
   ## Python.
 
@@ -213,97 +324,6 @@ PACKAGES_HOMEBREW = [
 
   "ocaml",
   "opam",
-
-  # Fonts.
-
-  [:cask, "font-fontawesome"],
-  [:cask, "font-meslo-lg"],
-  [:cask, "font-dejavu-sans"],
-  [:cask, "font-hack"],
-  [:cask, "font-charter"],
-  [:cask, "font-fantasque-sans-mono"],
-  [:cask, "font-input"],
-  [:cask, "font-linux-libertine"],
-  [:cask, "font-charis-sil"],
-  [:cask, "font-norwester"],
-  [:cask, "font-mononoki"],
-  [:cask, "font-hermit"],
-  [:cask, "font-bungee"],
-  [:cask, "font-eb-garamond"],
-  [:cask, "font-et-book"],
-  [:cask, "font-open-sans"],
-  [:cask, "font-open-sans-condensed"],
-  [:cask, "font-roboto"],
-  [:cask, "font-roboto-condensed"],
-  [:cask, "font-roboto-mono"],
-  [:cask, "font-roboto-slab"],
-  [:cask, "font-lato"],
-  [:cask, "font-oswald"],
-  [:cask, "font-source-code-pro"],
-  [:cask, "font-source-sans-pro"],
-  [:cask, "font-source-serif-pro"],
-  [:cask, "font-montserrat"],
-  [:cask, "font-raleway"],
-  [:cask, "font-pt-mono"],
-  [:cask, "font-pt-sans"],
-  [:cask, "font-pt-serif"],
-  [:cask, "font-lora"],
-  [:cask, "font-droid-sans"],
-  [:cask, "font-droid-sans-mono"],
-  [:cask, "font-droid-serif"],
-  [:cask, "font-ubuntu"],
-  [:cask, "font-merriweather"],
-  [:cask, "font-merriweather-sans"],
-  [:cask, "font-noto-sans"],
-  [:cask, "font-noto-emoji"],
-  [:cask, "font-noto-serif"],
-  [:cask, "font-inconsolata"],
-  [:cask, "font-alegreya"],
-  [:cask, "font-alegreya-sc"],
-  [:cask, "font-alegreya-sans"],
-  [:cask, "font-alegreya-sans-sc"],
-  [:cask, "font-exo"],
-  [:cask, "font-exo2"],
-  [:cask, "font-fira-code"],
-  [:cask, "font-fira-mono"],
-  [:cask, "font-fira-sans"],
-  [:cask, "font-crimson-text"],
-  [:cask, "font-vollkorn"],
-  [:cask, "font-andada"],
-  [:cask, "font-andada-sc"],
-  [:cask, "font-abril-fatface"],
-  [:cask, "font-cardo"],
-  [:cask, "font-gentium-basic"],
-  [:cask, "font-gentium-book-basic"],
-  [:cask, "font-gentium-plus"],
-  [:cask, "font-libre-baskerville"],
-  [:cask, "font-playfair-display"],
-  [:cask, "font-playfair-display-sc"],
-  [:cask, "font-gravitas-one"],
-  [:cask, "font-old-standard-tt"],
-  [:cask, "font-hasklig"],
-  [:cask, "font-monoid"],
-  [:cask, "font-monoisome"],
-  [:cask, "font-iosevka"],
-  # TODO: [:cask, "font-julius-sans-one"],
-  [:cask, "font-oxygen"],
-  [:cask, "font-oxygen-mono"],
-  [:cask, "font-bebas-neue"],
-  [:cask, "font-cabin"],
-  [:cask, "font-cabin-condensed"],
-  [:cask, "font-cabin-sketch"],
-  [:cask, "font-bitstream-vera"],
-  # TODO: [:cask, "font-bree-serif"],
-  [:cask, "font-junicode"],
-  [:cask, "font-overpass"],
-  [:cask, "font-rajdhani"],
-  [:cask, "font-tangerine"],
-  [:cask, "font-anonymous-pro"],
-  [:cask, "font-everson-mono"],
-  [:cask, "font-gnu-unifont"],
-  # TODO: [:cask, "font-andika"],
-  [:cask, "font-cooper-hewitt"],
-  [:cask, "font-nunito"],
 ]
 
 PACKAGES_RACKET = [
@@ -333,39 +353,27 @@ task packages: [
 namespace :packages do
   def package_manager name, packages, list
     desc "Install #{name} packages."
-    task name.downcase => [:homebrew] do
+    task name.downcase do
       installed_packages_string, status = Open3.capture2 list
       unless status == 0
         abort "Failed to list installed packages for #{name} with ‘#{list}’."
       end
-      installed_packages = installed_packages_string.split("\n").map { |installed_package_string|
-          installed_package_string.strip.split(/\s+/).first.downcase
-        }
+      installed_packages = installed_packages_string.split("\n")
+        .map { |installed_package_string| package_name installed_package_string}
       packages.each do |package|
-        if ! installed_packages.include? package
+        if ! installed_packages.include? package_name(package)
             yield package
         end
       end
     end
   end
 
-  desc "Install Homebrew packages."
-  task homebrew: ["homebrew:install", "homebrew:taps"] do
-    installed_packages = (`brew list`.split("\n") +
-                          `brew cask list`.split("\n")).map { |cask| cask.split(" ").first }
-    PACKAGES_HOMEBREW.each do |package_specification|
-      package_specification = Array(package_specification)
-      cask = ""
-      if package_specification.first == :cask
-        package_specification.shift
-        cask = " cask"
-      end
-      package, *args = package_specification
-      if ! installed_packages.include? package.split("/").last
-        sh "brew#{cask} install '#{package}' #{args.map { |tap| "'#{tap}'" }.join(" ")}"
-      end
-    end
+  def package_name package_specification
+    package_specification.strip.split(/\s+/).first.downcase
   end
+
+  desc "Install Homebrew packages and Casks."
+  task homebrew: ["homebrew:install", "homebrew:taps", "homebrew:cask", "homebrew:homebrew"]
 
   namespace :homebrew do
 
@@ -378,20 +386,28 @@ namespace :packages do
     end
 
     package_manager "Taps", PACKAGES_HOMEBREW_TAPS, "brew tap" do |package|
-      sh "brew tap '#{package}'"
+      sh "brew tap #{package}"
+    end
+
+    package_manager "Cask", PACKAGES_HOMEBREW_CASK, "brew cask list" do |package|
+      sh "brew cask install #{package}"
+    end
+
+    package_manager "Homebrew", PACKAGES_HOMEBREW_HOMEBREW, "brew list" do |package|
+      sh "brew install #{package}"
     end
   end
 
   package_manager "Racket", PACKAGES_RACKET, "raco pkg show --user" do |package|
-    sh "raco pkg install --auto '#{package}'"
+    sh "raco pkg install --auto #{package}"
   end
 
   package_manager "Python", PACKAGES_PYTHON, "pip list --format=legacy" do |package|
-    sh "pip install '#{package}'"
+    sh "pip install #{package}"
   end
 
   package_manager "OCaml", PACKAGES_OCAML, "opam list --short" do |package|
-    sh "opam install --yes '#{package}'"
+    sh "opam install --yes #{package}"
   end
 end
 
