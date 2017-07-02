@@ -985,25 +985,22 @@ namespace :backup do
   end
 
   desc "Backup storage to remote."
-  task storage: "stoage:backup"
+  task storage: BACKUP_STORAGE do
+    sh backup_remote_credentials, <<-COMMAND.to_command
+      ulimit -n 1024 &&
+      duplicity --allow-source-mismatch
+                --full-if-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
+                --progress
+                --dry-run
+                '#{BACKUP_STORAGE}'
+                '#{BACKUP_SERVER}'
+    COMMAND
+    puts
+    puts
+    puts "TODO: Remove ‘--dry-run’!"
+  end
 
   namespace :storage do
-
-    desc "Backup storage."
-    task backup: BACKUP_STORAGE do
-      sh backup_remote_credentials, <<-COMMAND.to_command
-        ulimit -n 1024 &&
-        duplicity --allow-source-mismatch
-                  --full-if-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
-                  --progress
-                  --dry-run
-                  '#{BACKUP_STORAGE}'
-                  '#{BACKUP_SERVER}'
-      COMMAND
-      puts
-      puts
-      puts "TODO: Remove ‘--dry-run’!"
-    end
 
     desc "Restore storage."
     task :restore, [:path] do |t, args|
