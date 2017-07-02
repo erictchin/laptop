@@ -1100,7 +1100,7 @@ namespace :backup do
   end
 
   file BACKUP_STORAGE do
-    abort "Store not found at ‘#{BACKUP_STORAGE}’."
+    abort "Storage not found at ‘#{BACKUP_STORAGE}’."
   end
 
   def backup_remote_credentials
