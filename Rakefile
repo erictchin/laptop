@@ -337,18 +337,18 @@ task packages: [
 
 namespace :packages do
 
-  def package_manager name, packages, list
+  def package_manager name, packages, list, install
     desc "Install #{name} packages."
     task name.downcase do
       installed_packages_string, status = Open3.capture2 list
       unless status == 0
         abort "Failed to list installed packages for #{name} with ‘#{list}’."
       end
-      installed_packages = installed_packages_string.strip.split("\n")
+      installed_packages = installed_packages_string.strip.split(/\n+/)
         .map { |installed_package_string| package_name installed_package_string}
       packages.each do |package|
         if ! installed_packages.include? package_name(package)
-            yield package
+            sh "#{install} #{package}"
         end
       end
     end
@@ -382,30 +382,18 @@ namespace :packages do
       end
     end
 
-    package_manager "Taps", PACKAGES_HOMEBREW_TAPS, "brew tap" do |package|
-      sh "brew tap #{package}"
-    end
+    package_manager "Taps", PACKAGES_HOMEBREW_TAPS, "env HOMEBREW_NO_AUTO_UPDATE=true brew tap", "brew tap"
 
-    package_manager "Cask", PACKAGES_HOMEBREW_CASK, "brew cask list" do |package|
-      sh "brew cask install #{package}"
-    end
+    package_manager "Cask", PACKAGES_HOMEBREW_CASK, "brew cask list", "brew cask install"
 
-    package_manager "Homebrew", PACKAGES_HOMEBREW_HOMEBREW, "brew list" do |package|
-      sh "brew install #{package}"
-    end
+    package_manager "Homebrew", PACKAGES_HOMEBREW_HOMEBREW, "brew list", "brew install"
   end
 
-  package_manager "Racket", PACKAGES_RACKET, "raco pkg show --user" do |package|
-    sh "raco pkg install --auto #{package}"
-  end
+  package_manager "Racket", PACKAGES_RACKET, "raco pkg show --user", "raco pkg install --auto"
 
-  package_manager "Python", PACKAGES_PYTHON, "pip list --format=legacy" do |package|
-    sh "pip install #{package}"
-  end
+  package_manager "Python", PACKAGES_PYTHON, "pip list --format=legacy", "pip install"
 
-  package_manager "OCaml", PACKAGES_OCAML, "opam list --short" do |package|
-    sh "opam install --yes #{package}"
-  end
+  package_manager "OCaml", PACKAGES_OCAML, "opam list --short", "opam install --yes"
 end
 
 ######################################################################################################
