@@ -210,6 +210,10 @@ PACKAGES_HOMEBREW = [
 
   [:cask, "arduino"],
 
+  ## Python.
+
+  "python",
+
   # Fonts.
 
   [:cask, "font-fontawesome"],
