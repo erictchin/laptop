@@ -302,7 +302,7 @@ PACKAGES_HOMEBREW = [
   [:cask, "font-nunito"],
 ]
 
-PACKAGES_OPAM = [
+PACKAGES_OCAML = [
   "merlin",
   "ocp-indent",
   "utop",
@@ -321,7 +321,7 @@ PACKAGES_PYTHON = [
 desc "Install packages."
 task packages: [
   "packages:homebrew",
-  "packages:opam",
+  "packages:ocaml",
   "packages:racket",
   "packages:python",
 ]
@@ -329,10 +329,7 @@ task packages: [
 namespace :packages do
 
   desc "Install Homebrew packages."
-  task homebrew: [
-         "homebrew:install",
-         "homebrew:taps",
-       ] do
+  task homebrew: ["homebrew:install", "homebrew:taps"] do
     installed_packages = (`brew list`.split("\n") +
                           `brew cask list`.split("\n")).map { |cask| cask.split(" ").first }
     PACKAGES_HOMEBREW.each do |package_specification|
@@ -370,12 +367,12 @@ namespace :packages do
     end
   end
 
-  desc "Install Opam packages."
-  task opam: [:homebrew] do
-    installed_opam_packages = `opam list --short`.split("\n")
-    PACKAGES_OPAM.each do |opam_package|
-      if ! installed_opam_packages.include? opam_package
-        sh "opam install --yes '#{opam_package}'"
+  desc "Install OCaml packages."
+  task ocaml: [:homebrew] do
+    installed_ocaml_packages = `ocaml list --short`.split("\n")
+    PACKAGES_OCAML.each do |ocaml_package|
+      if ! installed_ocaml_packages.include? ocaml_package
+        sh "ocaml install --yes '#{ocaml_package}'"
       end
     end
   end
@@ -755,7 +752,6 @@ COMPOSE_PATH = "#{Dir.home}/Library/KeyBindings"
 COMPOSE_FILE = "#{COMPOSE_PATH}/DefaultKeyBinding.dict"
 
 desc "Install ‘compose’."
-
 task compose: COMPOSE_PATH do
   def compose_render node
     compose_to_s(compose_decompose(node))
@@ -837,6 +833,8 @@ task compose: COMPOSE_PATH do
   end
 end
 
+directory COMPOSE_PATH
+
 ######################################################################################################
 #
 # Bash
@@ -845,7 +843,7 @@ BASH_PATH = "/usr/local/bin/bash"
 BASH_SHELLS = "/etc/shells"
 
 desc "Install Bash configuration."
-task :bash do
+task bash: "/usr/local/bin/bash" do
   _, status = Open3.capture2e "grep '#{BASH_PATH}' '#{BASH_SHELLS}'"
   unless status == 0
     sh %Q{sudo -u root bash -c "echo '#{BASH_PATH}' >> '#{BASH_SHELLS}'"}
@@ -854,6 +852,8 @@ task :bash do
     sh "chsh -s '#{BASH_PATH}' '#{Etc.getlogin}'"
   end
 end
+
+file "/usr/local/bin/bash" => "packages:homebrew"
 
 ######################################################################################################
 #
@@ -938,9 +938,7 @@ task "inkscape-palettes" => INKSCAPE_PALETTES_PATH do
   end
 end
 
-file INKSCAPE_PALETTES_PATH do
-  abort "Failed to find folder for Inkscape palettes at ‘#{INKSCAPE_PALETTES_PATH}’. Is Inkscape installed?"
-end
+file INKSCAPE_PALETTES_PATH => "packages:homebrew"
 
 ######################################################################################################
 #
