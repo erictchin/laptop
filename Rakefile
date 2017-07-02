@@ -993,7 +993,7 @@ namespace :backup do
       sh backup_remote_credentials, <<-COMMAND.to_command
         ulimit -n 1024 &&
         duplicity --allow-source-mismatch
-                  --full-if-older-than '#{BACKUP_FULL_EVERY}'
+                  --full-if-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
                   --progress
                   --dry-run
                   '#{BACKUP_STORAGE}'
@@ -1004,80 +1004,78 @@ namespace :backup do
       puts "TODO: Remove ‘--dry-run’!"
     end
 
-    # desc "Restore backup."
-    # task :restore do
-    #   if File.exists? DISK_REPOSITORY
-    #     abort "Repository “#{DISK_REPOSITORY}” already exists."
-    #   end
-    # 
-    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-    #     ulimit -n 1024 &&
-    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-    #               --progress
-    #               restore
-    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
-    #               '#{DISK_REPOSITORY}'
-    #   COMMAND
-    # end
-    # 
-    # desc "Verify restored backup."
-    # task :verify do
-    #   unless File.exists? DISK_REPOSITORY
-    #     abort "Repository “#{DISK_REPOSITORY}” does not exist."
-    #   end
-    # 
-    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-    #     ulimit -n 1024 &&
-    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-    #               verify
-    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
-    #               '#{DISK_REPOSITORY}'
-    #   COMMAND
-    # end
-    # 
-    # desc "Describe backup status."
-    # task :status do
-    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-    #     ulimit -n 1024 &&
-    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-    #               collection-status
-    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
-    #   COMMAND
-    # end
-    # 
-    # desc "List backup files."
-    # task :list do
-    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-    #     ulimit -n 1024 &&
-    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-    #               list-current-files
-    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
-    #   COMMAND
-    # end
-    # 
-    # desc "Clean up old backups."
-    # task :clean do
-    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-    #     ulimit -n 1024 &&
-    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-    #               remove-older-than '#{DISK_BACKUP_FULL_EVERY}'
-    #               --force
-    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
-    #   COMMAND
-    # end
-    # 
-    # namespace :clean do
-    # 
-    #   desc "List which backups would “disk:backup:clean” remove."
-    #   task "dry-run" do
-    #     sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-    #       ulimit -n 1024 &&
-    #       duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-    #                 remove-older-than '#{DISK_BACKUP_FULL_EVERY}'
-    #                 '#{DISK_BACKUP_PRIMARY_SERVER}'
-    #     COMMAND
-    #   end
-    # end
+    desc "Restore storage."
+    task :restore, [:path] do |t, args|
+      path = args[:path]
+      if path.nil? || path.blank?
+        abort "Path not given."
+      end
+      if File.exists? path
+        abort "Path ‘#{path}’ already exists."
+      end
+
+      sh backup_remote_credentials, <<-COMMAND.to_command
+        ulimit -n 1024 &&
+        duplicity --progress restore '#{BACKUP_SERVER}' '#{path}'
+      COMMAND
+    end
+
+    desc "Verify restored storage."
+    task :verify, [:path] do |t, args|
+      path = args[:path]
+      if path.nil? || path.blank?
+        abort "Path not given."
+      end
+      if ! File.exists? path
+        abort "Path ‘#{path}’ does not exist."
+      end
+
+      sh backup_remote_credentials, <<-COMMAND.to_command
+        ulimit -n 1024 &&
+        duplicity verify '#{BACKUP_SERVER}' '#{path}'
+      COMMAND
+    end
+  end
+
+  namespace :remote do
+
+    desc "Describe remote status."
+    task :status do
+      sh backup_remote_credentials, <<-COMMAND.to_command
+        ulimit -n 1024 &&
+        duplicity collection-status '#{BACKUP_SERVER}'
+      COMMAND
+    end
+
+    desc "List remote files."
+    task :list do
+      sh backup_remote_credentials, <<-COMMAND.to_command
+        ulimit -n 1024 &&
+        duplicity list-current-files '#{BACKUP_SERVER}'
+      COMMAND
+    end
+
+    desc "Clean up old backups in remote."
+    task :clean do
+      sh backup_remote_credentials, <<-COMMAND.to_command
+        ulimit -n 1024 &&
+        duplicity remove-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
+                  --force
+                  '#{BACKUP_SERVER}'
+      COMMAND
+    end
+
+    namespace :clean do
+
+      desc "List which backups ‘backup:remote:clean’ would remove."
+      task "dry-run" do
+        sh backup_remote_credentials, <<-COMMAND.to_command
+          ulimit -n 1024 &&
+          duplicity remove-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
+                    '#{BACKUP_SERVER}'
+        COMMAND
+      end
+    end
   end
 
   desc "Backup ‘leafac.com’."
