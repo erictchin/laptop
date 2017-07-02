@@ -336,6 +336,7 @@ task packages: [
 ]
 
 namespace :packages do
+
   def package_manager name, packages, list
     desc "Install #{name} packages."
     task name.downcase do
@@ -366,6 +367,7 @@ namespace :packages do
     task install: ["install:command-line-tools", "/usr/local/bin/brew"]
 
     namespace :install do
+
       desc "Install Command-Line Tools."
       task "command-line-tools" do
         _, status = Open3.capture2e "xcode-select --print-path"
@@ -982,19 +984,100 @@ namespace :backup do
   end
 
   desc "Backup storage."
-  task storage: BACKUP_STORAGE do
-    sh backup_remote_credentials, <<-COMMAND.to_command
-      ulimit -n 1024 &&
-      duplicity --allow-source-mismatch
-                --full-if-older-than '#{BACKUP_FULL_EVERY}'
-                --progress
-                --dry-run
-                '#{BACKUP_STORAGE}'
-                '#{BACKUP_SERVER}'
-    COMMAND
-    puts
-    puts
-    puts "TODO: Remove ‘--dry-run’!"
+  task storage: "stoage:backup"
+
+  namespace :storage do
+
+    desc "Backup storage."
+    task backup: BACKUP_STORAGE do
+      sh backup_remote_credentials, <<-COMMAND.to_command
+        ulimit -n 1024 &&
+        duplicity --allow-source-mismatch
+                  --full-if-older-than '#{BACKUP_FULL_EVERY}'
+                  --progress
+                  --dry-run
+                  '#{BACKUP_STORAGE}'
+                  '#{BACKUP_SERVER}'
+      COMMAND
+      puts
+      puts
+      puts "TODO: Remove ‘--dry-run’!"
+    end
+
+    # desc "Restore backup."
+    # task :restore do
+    #   if File.exists? DISK_REPOSITORY
+    #     abort "Repository “#{DISK_REPOSITORY}” already exists."
+    #   end
+    # 
+    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
+    #     ulimit -n 1024 &&
+    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
+    #               --progress
+    #               restore
+    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
+    #               '#{DISK_REPOSITORY}'
+    #   COMMAND
+    # end
+    # 
+    # desc "Verify restored backup."
+    # task :verify do
+    #   unless File.exists? DISK_REPOSITORY
+    #     abort "Repository “#{DISK_REPOSITORY}” does not exist."
+    #   end
+    # 
+    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
+    #     ulimit -n 1024 &&
+    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
+    #               verify
+    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
+    #               '#{DISK_REPOSITORY}'
+    #   COMMAND
+    # end
+    # 
+    # desc "Describe backup status."
+    # task :status do
+    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
+    #     ulimit -n 1024 &&
+    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
+    #               collection-status
+    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
+    #   COMMAND
+    # end
+    # 
+    # desc "List backup files."
+    # task :list do
+    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
+    #     ulimit -n 1024 &&
+    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
+    #               list-current-files
+    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
+    #   COMMAND
+    # end
+    # 
+    # desc "Clean up old backups."
+    # task :clean do
+    #   sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
+    #     ulimit -n 1024 &&
+    #     duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
+    #               remove-older-than '#{DISK_BACKUP_FULL_EVERY}'
+    #               --force
+    #               '#{DISK_BACKUP_PRIMARY_SERVER}'
+    #   COMMAND
+    # end
+    # 
+    # namespace :clean do
+    # 
+    #   desc "List which backups would “disk:backup:clean” remove."
+    #   task "dry-run" do
+    #     sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
+    #       ulimit -n 1024 &&
+    #       duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
+    #                 remove-older-than '#{DISK_BACKUP_FULL_EVERY}'
+    #                 '#{DISK_BACKUP_PRIMARY_SERVER}'
+    #     COMMAND
+    #   end
+    # end
   end
 
   desc "Backup ‘leafac.com’."
@@ -1012,84 +1095,6 @@ namespace :backup do
                         administration make backup'
     COMMAND
   end
-
-  # namespace :backup do
-  # 
-  #   desc "Restore backup."
-  #   task :restore do
-  #     if File.exists? DISK_REPOSITORY
-  #       abort "Repository “#{DISK_REPOSITORY}” already exists."
-  #     end
-  # 
-  #     sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-  #       ulimit -n 1024 &&
-  #       duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-  #                 --progress
-  #                 restore
-  #                 '#{DISK_BACKUP_PRIMARY_SERVER}'
-  #                 '#{DISK_REPOSITORY}'
-  #     COMMAND
-  #   end
-  # 
-  #   desc "Verify restored backup."
-  #   task :verify do
-  #     unless File.exists? DISK_REPOSITORY
-  #       abort "Repository “#{DISK_REPOSITORY}” does not exist."
-  #     end
-  # 
-  #     sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-  #       ulimit -n 1024 &&
-  #       duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-  #                 verify
-  #                 '#{DISK_BACKUP_PRIMARY_SERVER}'
-  #                 '#{DISK_REPOSITORY}'
-  #     COMMAND
-  #   end
-  # 
-  #   desc "Describe backup status."
-  #   task :status do
-  #     sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-  #       ulimit -n 1024 &&
-  #       duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-  #                 collection-status
-  #                 '#{DISK_BACKUP_PRIMARY_SERVER}'
-  #     COMMAND
-  #   end
-  # 
-  #   desc "List backup files."
-  #   task :list do
-  #     sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-  #       ulimit -n 1024 &&
-  #       duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-  #                 list-current-files
-  #                 '#{DISK_BACKUP_PRIMARY_SERVER}'
-  #     COMMAND
-  #   end
-  # 
-  #   desc "Clean up old backups."
-  #   task :clean do
-  #     sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-  #       ulimit -n 1024 &&
-  #       duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-  #                 remove-older-than '#{DISK_BACKUP_FULL_EVERY}'
-  #                 --force
-  #                 '#{DISK_BACKUP_PRIMARY_SERVER}'
-  #     COMMAND
-  #   end
-  # 
-  #   namespace :clean do
-  # 
-  #     desc "List which backups would “disk:backup:clean” remove."
-  #     task "dry-run" do
-  #       sh disk_backup_credentials(DISK_BACKUP_PRIMARY_SERVER), <<-COMMAND.to_command
-  #         ulimit -n 1024 &&
-  #         duplicity --encrypt-sign-key '#{DISK_BACKUP_GNUPG_KEY}'
-  #                   remove-older-than '#{DISK_BACKUP_FULL_EVERY}'
-  #                   '#{DISK_BACKUP_PRIMARY_SERVER}'
-  #       COMMAND
-  #     end
-  #   end
-  # end
 
   file BACKUP_LAPTOP do
     abort "Laptop not found at ‘#{BACKUP_LAPTOP}’."
