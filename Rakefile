@@ -972,7 +972,7 @@ task backup: ["backup:laptop", "backup:storage", "backup:leafac.com"]
 
 namespace :backup do
 
-  desc "Backup laptop."
+  desc "Backup laptop to storage."
   task laptop: [BACKUP_LAPTOP, BACKUP_STORAGE] do
     sh <<-COMMAND.to_command
       rsync -av
@@ -984,7 +984,7 @@ namespace :backup do
     COMMAND
   end
 
-  desc "Backup storage."
+  desc "Backup storage to remote."
   task storage: "stoage:backup"
 
   namespace :storage do
