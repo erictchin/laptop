@@ -192,11 +192,6 @@ PACKAGES_HOMEBREW = [
 
   # Programming languages.
 
-  ## OCaml.
-
-  "ocaml",
-  "opam",
-
   ## Racket.
 
   [:cask ,"racket"],
@@ -213,6 +208,11 @@ PACKAGES_HOMEBREW = [
   ## Python.
 
   "python",
+
+  ## OCaml.
+
+  "ocaml",
+  "opam",
 
   # Fonts.
 
@@ -306,12 +306,6 @@ PACKAGES_HOMEBREW = [
   [:cask, "font-nunito"],
 ]
 
-PACKAGES_OCAML = [
-  "merlin",
-  "ocp-indent",
-  "utop",
-]
-
 PACKAGES_RACKET = [
   "drracket-solarized",
   "pollen",
@@ -322,15 +316,38 @@ PACKAGES_PYTHON = [
   "pygments",
 ]
 
+PACKAGES_OCAML = [
+  "merlin",
+  "ocp-indent",
+  "utop",
+]
+
 desc "Install packages."
 task packages: [
   "packages:homebrew",
-  "packages:ocaml",
   "packages:racket",
   "packages:python",
+  "packages:ocaml",
 ]
 
 namespace :packages do
+  def package_manager name, packages, list
+    desc "Install #{name} packages."
+    task name.downcase => [:homebrew] do
+      installed_packages_string, status = Open3.capture2 list
+      unless status == 0
+        abort "Failed to list installed packages for #{name} with ‘#{list}’."
+      end
+      installed_packages = installed_packages_string.split("\n").map { |installed_package_string|
+          installed_package_string.strip.split(/\s+/).first.downcase
+        }
+      packages.each do |package|
+        if ! installed_packages.include? package
+            yield package
+        end
+      end
+    end
+  end
 
   desc "Install Homebrew packages."
   task homebrew: ["homebrew:install", "homebrew:taps"] do
@@ -360,51 +377,21 @@ namespace :packages do
       sh "sudo chown -R '#{Etc.getlogin}:#{Etc.getgrgid(Etc.getpwuid.gid).name}' '/usr/local'"
     end
 
-    desc "Install Homebrew taps."
-    task :taps do
-      homebrew_tapped_repositories = `brew tap`.split("\n")
-      PACKAGES_HOMEBREW_TAPS.each do |homebrew_tap|
-        if ! homebrew_tapped_repositories.include? homebrew_tap
-          sh "brew tap '#{homebrew_tap}'"
-        end
-      end
+    package_manager "Taps", PACKAGES_HOMEBREW_TAPS, "brew tap" do |package|
+      sh "brew tap '#{package}'"
     end
   end
 
-  desc "Install OCaml packages."
-  task ocaml: [:homebrew] do
-    installed_ocaml_packages = `opam list --short`.split("\n")
-    PACKAGES_OCAML.each do |ocaml_package|
-      if ! installed_ocaml_packages.include? ocaml_package
-        sh "opam install --yes '#{ocaml_package}'"
-      end
-    end
+  package_manager "Racket", PACKAGES_RACKET, "raco pkg show --user" do |package|
+    sh "raco pkg install --auto '#{package}'"
   end
 
-  desc "Install Racket packages."
-  task racket: [:homebrew] do
-    installed_racket_packages =
-      `raco pkg show --user`.split("\n").map { |racket_package|
-        racket_package.strip.split(/\s+/).first
-      }
-    PACKAGES_RACKET.each do |racket_package|
-      if ! installed_racket_packages.include? racket_package
-        sh "raco pkg install --auto '#{racket_package}'"
-      end
-    end
+  package_manager "Python", PACKAGES_PYTHON, "pip list --format=legacy" do |package|
+    sh "pip install '#{package}'"
   end
 
-  desc "Install Python packages."
-  task python: [:homebrew] do
-    installed_python_packages =
-      `pip list --format=legacy`.split("\n").map { |python_package|
-        python_package.strip.split(/\s+/).first.downcase
-      }
-    PACKAGES_PYTHON.each do |python_package|
-      if ! installed_python_packages.include? python_package
-        sh "pip install '#{python_package}'"
-      end
-    end
+  package_manager "OCaml", PACKAGES_OCAML, "opam list --short" do |package|
+    sh "opam install --yes '#{package}'"
   end
 end
 
