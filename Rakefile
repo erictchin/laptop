@@ -1,5 +1,3 @@
-# coding: utf-8
-
 require "yaml"
 require "open3"
 require "etc"
