@@ -4,7 +4,7 @@ require "etc"
 
 ######################################################################################################
 #
-# Main
+# Default
 
 desc "Install all features."
 task default: [
@@ -356,7 +356,7 @@ namespace :packages do
       unless status == 0
         abort "Failed to list installed packages for #{name} with ‘#{list}’."
       end
-      installed_packages = installed_packages_string.split("\n")
+      installed_packages = installed_packages_string.strip.split("\n")
         .map { |installed_package_string| package_name installed_package_string}
       packages.each do |package|
         if ! installed_packages.include? package_name(package)
