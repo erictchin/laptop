@@ -40,7 +40,10 @@ end
 
 desc "Install Command-Line Tools."
 task "command-line-tools" do
-  sh "xcode-select --install 2> /dev/null"
+  _, status = Open3.capture2e "xcode-select --print-path"
+  unless status == 0
+    sh "xcode-select --install"
+  end
 end
 
 ######################################################################################################
@@ -830,7 +833,7 @@ task compose: COMPOSE_PATH do
   end
 
   install_file COMPOSE_FILE, compose_render(COMPOSE_MAPPINGS) do
-    puts "Reopen applications for new compose combinations to take effect."
+    puts "Reopen applications for the new compose combinations to take effect."
   end
 end
 
