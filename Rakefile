@@ -9,7 +9,6 @@ require "etc"
 desc "Install all features."
 task default: [
   :laptop,
-  "command-line-tools",
   :packages,
   :compose,
   :bash,
@@ -29,18 +28,6 @@ task :laptop do
 (cd '#{File.expand_path("..", __FILE__)}' && rake $@)
 LAPTOP
     chmod "a+x", path
-  end
-end
-
-######################################################################################################
-#
-# Command-Line Tools
-
-desc "Install Command-Line Tools."
-task "command-line-tools" do
-  _, status = Open3.capture2e "xcode-select --print-path"
-  unless status == 0
-    sh "xcode-select --install"
   end
 end
 
@@ -376,11 +363,21 @@ namespace :packages do
   namespace :homebrew do
 
     desc "Install Homebrew."
-    task install: ["command-line-tools", "/usr/local/bin/brew"]
+    task install: ["install:command-line-tools", "/usr/local/bin/brew"]
 
-    file "/usr/local/bin/brew" do
-      sh %Q{/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"}
-      sh "sudo chown -R '#{Etc.getlogin}:#{Etc.getgrgid(Etc.getpwuid.gid).name}' '/usr/local'"
+    namespace :install do
+      desc "Install Command-Line Tools."
+      task "command-line-tools" do
+        _, status = Open3.capture2e "xcode-select --print-path"
+        unless status == 0
+          sh "xcode-select --install"
+        end
+      end
+
+      file "/usr/local/bin/brew" do
+        sh %Q{/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"}
+        sh "sudo chown -R '#{Etc.getlogin}:#{Etc.getgrgid(Etc.getpwuid.gid).name}' '/usr/local'"
+      end
     end
 
     package_manager "Taps", PACKAGES_HOMEBREW_TAPS, "brew tap" do |package|
