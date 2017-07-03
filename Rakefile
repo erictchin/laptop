@@ -954,6 +954,8 @@ ssFKJ3QI/oL0
 -----END PGP MESSAGE-----
 CREDENTIALS
 BACKUP_REMOTE_FULL_EVERY = "6M"
+BACKUP_REMOTE_TEST_FILE = "laptop/Documents/org/notes.org"
+BACKUP_REMOTE_TEST_PATH = "#{Dir.home}/Downloads/backup-test.org"
 
 desc "Backup laptop, storage and ‘leafac.com’."
 task backup: ["backup:laptop", "backup:storage", "backup:leafac.com"]
@@ -998,7 +1000,7 @@ namespace :backup do
 
       sh backup_remote_credentials, <<-COMMAND.to_command
         ulimit -n 1024 &&
-        duplicity --progress restore '#{BACKUP_REMOTE}' '#{path}'
+        duplicity restore --progress '#{BACKUP_REMOTE}' '#{path}'
       COMMAND
     end
 
@@ -1057,6 +1059,18 @@ namespace :backup do
                     '#{BACKUP_REMOTE}'
         COMMAND
       end
+    end
+
+    desc "Test backup in remote."
+    task :test do
+      sh backup_remote_credentials, <<-COMMAND.to_command
+        ulimit -n 1024 &&
+        duplicity restore
+                  --file-to-restore '#{BACKUP_REMOTE_TEST_FILE}'
+                  '#{BACKUP_REMOTE}'
+                  '#{BACKUP_REMOTE_TEST_PATH}'
+      COMMAND
+      sh "less '#{BACKUP_REMOTE_TEST_PATH}'"
     end
   end
 
