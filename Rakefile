@@ -979,13 +979,9 @@ namespace :backup do
       duplicity --allow-source-mismatch
                 --full-if-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
                 --progress
-                --dry-run
                 '#{BACKUP_STORAGE}'
-                '#{BACKUP_SERVER}'
+                '#{BACKUP_REMOTE}'
     COMMAND
-    puts
-    puts
-    puts "TODO: Remove ‘--dry-run’!"
   end
 
   namespace :storage do
@@ -1002,7 +998,7 @@ namespace :backup do
 
       sh backup_remote_credentials, <<-COMMAND.to_command
         ulimit -n 1024 &&
-        duplicity --progress restore '#{BACKUP_SERVER}' '#{path}'
+        duplicity --progress restore '#{BACKUP_REMOTE}' '#{path}'
       COMMAND
     end
 
@@ -1018,7 +1014,7 @@ namespace :backup do
 
       sh backup_remote_credentials, <<-COMMAND.to_command
         ulimit -n 1024 &&
-        duplicity verify '#{BACKUP_SERVER}' '#{path}'
+        duplicity verify '#{BACKUP_REMOTE}' '#{path}'
       COMMAND
     end
   end
@@ -1029,7 +1025,7 @@ namespace :backup do
     task :status do
       sh backup_remote_credentials, <<-COMMAND.to_command
         ulimit -n 1024 &&
-        duplicity collection-status '#{BACKUP_SERVER}'
+        duplicity collection-status '#{BACKUP_REMOTE}'
       COMMAND
     end
 
@@ -1037,7 +1033,7 @@ namespace :backup do
     task :list do
       sh backup_remote_credentials, <<-COMMAND.to_command
         ulimit -n 1024 &&
-        duplicity list-current-files '#{BACKUP_SERVER}'
+        duplicity list-current-files '#{BACKUP_REMOTE}'
       COMMAND
     end
 
@@ -1047,7 +1043,7 @@ namespace :backup do
         ulimit -n 1024 &&
         duplicity remove-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
                   --force
-                  '#{BACKUP_SERVER}'
+                  '#{BACKUP_REMOTE}'
       COMMAND
     end
 
@@ -1058,7 +1054,7 @@ namespace :backup do
         sh backup_remote_credentials, <<-COMMAND.to_command
           ulimit -n 1024 &&
           duplicity remove-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
-                    '#{BACKUP_SERVER}'
+                    '#{BACKUP_REMOTE}'
         COMMAND
       end
     end
