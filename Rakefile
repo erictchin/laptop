@@ -965,7 +965,7 @@ namespace :backup do
 
   desc "Backup laptop to storage."
   task laptop: [BACKUP_LAPTOP, BACKUP_STORAGE] do
-    sh <<-COMMAND.to_command
+    sh(<<-COMMAND.to_command) {}
       rsync -av
             --delete
             --progress
