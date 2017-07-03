@@ -1,6 +1,7 @@
 require "yaml"
 require "open3"
 require "etc"
+require "shellwords"
 
 ######################################################################################################
 #
@@ -1085,7 +1086,7 @@ namespace :backup do
          docker-compose -f docker-compose.yml
                         -f docker-compose.administration.yml
                         run --rm
-                        #{backup_remote_credentials.map { |(key, value)| "-e '#{key}=#{value}'"}.join(" ") }
+                        #{backup_remote_credentials.map { |(key, value)| "-e #{key}=#{value.shellescape}"}.join(" ") }
                         administration make backup'
     COMMAND
   end
