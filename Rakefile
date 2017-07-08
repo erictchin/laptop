@@ -235,6 +235,7 @@ PACKAGES_HOMEBREW_CASK = [
   # TODO: "font-andika",
   "font-cooper-hewitt",
   "font-nunito",
+  "font-space-mono",
 ]
 
 PACKAGES_HOMEBREW_HOMEBREW = [
