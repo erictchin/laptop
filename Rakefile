@@ -88,6 +88,7 @@ PACKAGES_HOMEBREW_CASK = [
   "free-ruler",
   "unicodechecker",
   "xquartz",
+  "zotero",
 
   # Drivers.
 
@@ -236,6 +237,7 @@ PACKAGES_HOMEBREW_CASK = [
   "font-cooper-hewitt",
   "font-nunito",
   "font-space-mono",
+  #TODO: "font-metropolis",
 ]
 
 PACKAGES_HOMEBREW_HOMEBREW = [
