@@ -89,6 +89,7 @@ PACKAGES_HOMEBREW_CASK = [
   "unicodechecker",
   "xquartz",
   "zotero",
+  "keepassxc",
 
   # Drivers.
 
