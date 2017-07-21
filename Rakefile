@@ -90,6 +90,7 @@ PACKAGES_HOMEBREW_CASK = [
   "xquartz",
   "zotero",
   "keepassxc",
+  "day-o",
 
   # Drivers.
 
