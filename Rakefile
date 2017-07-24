@@ -1105,11 +1105,13 @@ namespace :backup do
   end
 
   def backup_remote_credentials
-    output, status = Open3.capture2 "gpg --decrypt --output - -", stdin_data: BACKUP_REMOTE_CREDENTIALS
-    unless status == 0
-      abort "Failed to unlock remote credentials."
+    @backup_remote_credentials ||= begin
+      output, status = Open3.capture2 "gpg --decrypt --output - -", stdin_data: BACKUP_REMOTE_CREDENTIALS
+      unless status == 0
+        abort "Failed to unlock remote credentials."
+      end
+      YAML.load output
     end
-    YAML.load output
   end
 end
 
