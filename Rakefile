@@ -966,8 +966,8 @@ ssFKJ3QI/oL0
 -----END PGP MESSAGE-----
 CREDENTIALS
 BACKUP_REMOTE_FULL_EVERY = "6M"
-BACKUP_REMOTE_TEST_FILE = "laptop/Documents/org/notes.org"
-BACKUP_REMOTE_TEST_PATH = "#{Dir.home}/Downloads/backup-test.org"
+BACKUP_REMOTE_TEST_FILE = "laptop/Pictures/avatar/cropped.jpg"
+BACKUP_REMOTE_TEST_PATH = "#{Dir.home}/Downloads/cropped.jpg"
 
 desc "Backup laptop, storage and ‘leafac.com’."
 task backup: ["backup:laptop", "backup:storage", "backup:leafac.com"]
