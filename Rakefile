@@ -28,7 +28,7 @@ task :laptop do
 #!/usr/bin/env bash
 (cd '#{File.expand_path("..", __FILE__)}' && rake $@)
 LAPTOP
-    chmod "a+x", path
+    chmod "a+x", LAPTOP_PATH
   end
 end
 
