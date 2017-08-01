@@ -39,6 +39,7 @@ end
 PACKAGES_HOMEBREW_TAPS = [
   "caskroom/cask",
   "caskroom/fonts",
+  "caskroom/drivers",
 ]
 
 PACKAGES_HOMEBREW_CASK = [
@@ -137,6 +138,11 @@ PACKAGES_HOMEBREW_CASK = [
   "adobe-reader",
   "detexify",
   "microsoft-office",
+
+  # Gaming.
+
+  "openemu",
+  "xbox360-controller-driver",
 
   # Programming languages.
 
