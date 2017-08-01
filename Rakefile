@@ -1137,6 +1137,8 @@ Inspect required entries:
   127.0.0.1 localhost
   255.255.255.255 broadcasthost
   ::1 localhost
+
+Press any key to continue...
 REQUIRED_ENTRIES
   STDIN.gets
   sh "less '#{HOSTS_LOCAL}'"
