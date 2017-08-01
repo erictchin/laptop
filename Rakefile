@@ -325,7 +325,6 @@ PACKAGES_HOMEBREW_HOMEBREW = [
 
 PACKAGES_RACKET = [
   "drracket-solarized",
-  "pollen",
 ]
 
 PACKAGES_PYTHON = [
