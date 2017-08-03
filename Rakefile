@@ -61,10 +61,6 @@ PACKAGES_HOMEBREW_CASK = [
   "flash-npapi",
   "google-chrome",
 
-  # Email.
-
-  "thunderbird",
-
   # Instant messaging.
 
   "skype",
