@@ -72,15 +72,10 @@ PACKAGES_HOMEBREW_CASK = [
   "mattermost",
   "slack",
 
-  # Command-line utils.
-
-  "iterm2",
-
   # Desktop utils.
 
   "caffeine",
   "shiftit",
-  "flux",
   "the-unarchiver",
   "grandperspective",
   "licecap",
@@ -92,6 +87,7 @@ PACKAGES_HOMEBREW_CASK = [
   "zotero",
   "keepassxc",
   "day-o",
+  "vienna",
 
   # Drivers.
 
@@ -118,7 +114,6 @@ PACKAGES_HOMEBREW_CASK = [
 
   # Image editing.
 
-  "skitch",
   # TODO: "inkscape", # https://inkscape.org/en/%7Etghs/%E2%98%85inkscape-0921-tghs_2-x11-107-x86_64dmg
   "color-oracle",
 
