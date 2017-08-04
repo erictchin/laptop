@@ -70,7 +70,6 @@ PACKAGES_HOMEBREW_CASK = [
 
   # Desktop utils.
 
-  "caffeine",
   "shiftit",
   "the-unarchiver",
   "grandperspective",
