@@ -81,7 +81,6 @@ PACKAGES_HOMEBREW_CASK = [
   "unicodechecker",
   "xquartz",
   "zotero",
-  "keepassxc",
   "day-o",
   "vienna",
 
