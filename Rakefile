@@ -13,7 +13,6 @@ task default: [
   :packages,
   :compose,
   :bash,
-  "inkscape-palettes",
 ]
 
 ######################################################################################################
@@ -78,10 +77,10 @@ PACKAGES_HOMEBREW_CASK = [
   "cool-retro-term",
   "free-ruler",
   "unicodechecker",
-  "xquartz",
   "zotero",
   "day-o",
   "vienna",
+  "color-oracle",
 
   # Drivers.
 
@@ -106,10 +105,10 @@ PACKAGES_HOMEBREW_CASK = [
 
   "yed",
 
-  # Image editing.
+  # Vector graphics.
 
+  "xquartz",
   "inkscape",
-  "color-oracle",
 
   # Virtualization.
 
@@ -835,91 +834,6 @@ task bash: "/usr/local/bin/bash" do
 end
 
 file "/usr/local/bin/bash" => "packages:homebrew"
-
-######################################################################################################
-#
-# Inkscape Palettes.
-
-INKSCAPE_PALETTES = {
-  solarized: <<-PALETTE,
-GIMP Palette
-Name: Solarized
-Columns: 16
-#
-  0  43  54 base03
-  7  54  66 base02
- 88 110 117 base01
-101 123 131 base00
-131 148 150 base0
-147 161 161 base1
-238 232 213 base2
-253 246 227 base3
-181 137   0 yellow
-203  75  22 orange
-220  50  47 red
-211  54 130 magenta
-108 113 196 violet
- 38 139 210 blue
- 42 161 152 cyan
-133 153   0 green
-PALETTE
-
-  "solarized-light" => <<-PALETTE,
-GIMP Palette
-Name: Solarized Light
-Columns: 16
-#
-  0  43  54 base03
-  7  54  66 base02
- 88 110 117 base01-optional-emphasized-content
-101 123 131 base00-body-text
-131 148 150 base0
-147 161 161 base1-comments
-238 232 213 base2-background-highlights
-253 246 227 base3-background
-181 137   0 yellow
-203  75  22 orange
-220  50  47 red
-211  54 130 magenta
-108 113 196 violet
- 38 139 210 blue
- 42 161 152 cyan
-133 153   0 green
-PALETTE
-
-  "solarized-dark" => <<-PALETTE,
-GIMP Palette
-Name: Solarized Dark
-Columns: 16
-#
-  0  43  54 base03-background
-  7  54  66 base02-background-highlights
- 88 110 117 base01-comments
-101 123 131 base00
-131 148 150 base0-body
-147 161 161 base1-optional-emphasized-content
-238 232 213 base2
-253 246 227 base3
-181 137   0 yellow
-203  75  22 orange
-220  50  47 red
-211  54 130 magenta
-108 113 196 violet
- 38 139 210 blue
- 42 161 152 cyan
-133 153   0 green
-PALETTE
-}
-INKSCAPE_PALETTES_PATH = "/Applications/Inkscape.app/Contents/Resources/share/inkscape/palettes"
-
-desc "Install Inkscape palettes."
-task "inkscape-palettes" => INKSCAPE_PALETTES_PATH do
-  INKSCAPE_PALETTES.each_pair do |(palette_name, palette)|
-    install_file "#{INKSCAPE_PALETTES_PATH}/#{palette_name}.gpl", palette
-  end
-end
-
-file INKSCAPE_PALETTES_PATH => "packages:homebrew"
 
 ######################################################################################################
 #

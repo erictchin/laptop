@@ -24,7 +24,6 @@ The @tt{laptop} executable provides a collection of separate features:
  @item{Installation of a compose key ⎄ for macOS.}
  @item{Backup to an external storage drive and @hyperlink["https://aws.amazon.com/s3/"]{Amazon S3} with @hyperlink["https://rsync.samba.org/"]{Rsync} and @hyperlink["http://duplicity.nongnu.org/"]{Duplicity}.}
  @item{Installation of custom @tt{/etc/hosts} based on @hyperlink["http://someonewhocares.org/hosts/"]{Dan Pollock's configurations}.}
- @item{Installation of @hyperlink["http://ethanschoonover.com/solarized"]{Solarized} color palette for @hyperlink["https://inkscape.org/"]{Inkscape}.}
  @item{Fix @tt{$PATH} environment variable for GUI applications.}]
 
 @section[#:tag "installation"]{Installation}
