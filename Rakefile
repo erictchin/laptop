@@ -108,7 +108,7 @@ PACKAGES_HOMEBREW_CASK = [
 
   # Image editing.
 
-  # TODO: "inkscape", # https://inkscape.org/en/%7Etghs/%E2%98%85inkscape-0921-tghs_2-x11-107-x86_64dmg
+  "inkscape",
   "color-oracle",
 
   # Virtualization.
