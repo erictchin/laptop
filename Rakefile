@@ -99,7 +99,6 @@ PACKAGES_HOMEBREW_CASK = [
 
   "ableton-live-lite",
   "vlc",
-  "spotify",
 
   # Graphs and diagrams.
 
