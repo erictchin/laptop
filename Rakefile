@@ -230,6 +230,7 @@ PACKAGES_HOMEBREW_CASK = [
   "font-space-mono",
   "font-metropolis",
   "font-euphoria-script",
+  "font-interface",
 ]
 
 PACKAGES_HOMEBREW_HOMEBREW = [
