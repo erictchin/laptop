@@ -365,11 +365,10 @@ namespace :packages do
     namespace :install do
 
       desc "Install Command-Line Tools."
-      task "command-line-tools" do
-        _, status = Open3.capture2e "xcode-select --print-path"
-        unless status == 0
-          sh "xcode-select --install"
-        end
+      task "command-line-tools" => "/Library/Developer/CommandLineTools/usr/bin/make"
+
+      file "/Library/Developer/CommandLineTools/usr/bin/make" do
+        sh "xcode-select --install"
       end
 
       file "/usr/local/bin/brew" do
