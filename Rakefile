@@ -97,7 +97,6 @@ PACKAGES_HOMEBREW_CASK = [
 
   # Audio and video.
 
-  "ableton-live-lite",
   "vlc",
 
   # Graphs and diagrams.
