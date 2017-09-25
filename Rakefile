@@ -89,7 +89,6 @@ PACKAGES_HOMEBREW_CASK = [
   # Text editing.
 
   "atom",
-  "emacs",
 
   # Ebook management.
 
@@ -117,7 +116,6 @@ PACKAGES_HOMEBREW_CASK = [
 
   "mactex",
   "skim",
-  "adobe-reader",
   "detexify",
   "microsoft-office",
 
