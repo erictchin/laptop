@@ -119,11 +119,6 @@ PACKAGES_HOMEBREW_CASK = [
   "detexify",
   "microsoft-office",
 
-  # Gaming.
-
-  "openemu",
-  "xbox360-controller-driver",
-
   # Programming languages.
 
   ## Racket.
