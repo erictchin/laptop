@@ -273,7 +273,6 @@ PACKAGES_HOMEBREW_HOMEBREW = [
 
   "pandoc",
   "aspell --with-lang-en --with-lang-pt_BR",
-  "languagetool",
 
   # Backup.
 
