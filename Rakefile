@@ -454,7 +454,6 @@ COMPOSE_MAPPINGS = {
     "~\\UF703" => "↦",
     "|->" => "↦",
     "mapsto" => "↦",
-    "~\\UF702" => "↤",
     "<-|" => "↤",
     "reversemapsto" => "↤",
     "searrow" => "↘",
