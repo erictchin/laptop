@@ -102,6 +102,10 @@ PACKAGES_HOMEBREW_CASK = [
 
   "yed",
 
+  # Backup.
+
+  "backblaze",
+
   # Vector graphics.
 
   "xquartz",
