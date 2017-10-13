@@ -79,7 +79,6 @@ PACKAGES_HOMEBREW_CASK = [
   "unicodechecker",
   "zotero",
   "day-o",
-  "vienna",
   "color-oracle",
 
   # Drivers.
