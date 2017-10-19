@@ -56,6 +56,7 @@ PACKAGES_HOMEBREW_CASK = [
   "firefox",
   "flash-npapi",
   "google-chrome",
+  "torbrowser",
 
   # Instant messaging.
 
