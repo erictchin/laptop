@@ -22,7 +22,6 @@ The @tt{laptop} executable provides a collection of separate features:
 @itemlist[
  @item{Installation of selected software and font packages with @hyperlink["http://brew.sh/"]{Homebrew}, @hyperlink["https://caskroom.github.io/"]{Homebrew Cask} and other package managers.}
  @item{Installation of a compose key ⎄ for macOS.}
- @item{Backup to an external storage drive and @hyperlink["https://aws.amazon.com/s3/"]{Amazon S3} with @hyperlink["https://rsync.samba.org/"]{Rsync} and @hyperlink["http://duplicity.nongnu.org/"]{Duplicity}.}
  @item{Installation of custom @tt{/etc/hosts} based on @hyperlink["http://someonewhocares.org/hosts/"]{Dan Pollock's configurations}.}
  @item{Fix @tt{$PATH} environment variable for GUI applications.}]
 
