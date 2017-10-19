@@ -4,7 +4,6 @@ require "etc"
 require "shellwords"
 
 ######################################################################################################
-#
 # Default
 
 desc "Install all features."
@@ -16,7 +15,6 @@ task default: [
 ]
 
 ######################################################################################################
-#
 # Laptop
 
 LAPTOP_PATH = "/usr/local/bin/laptop"
@@ -32,7 +30,6 @@ LAPTOP
 end
 
 ######################################################################################################
-#
 # Packages
 
 PACKAGES_HOMEBREW_TAPS = [
@@ -80,6 +77,7 @@ PACKAGES_HOMEBREW_CASK = [
   "zotero",
   "day-o",
   "color-oracle",
+  "cyberduck",
 
   # Drivers.
 
@@ -260,11 +258,6 @@ PACKAGES_HOMEBREW_HOMEBREW = [
   "watch",
   "rlwrap",
 
-  # Encryption.
-
-  "gnupg",
-  "pinentry-mac",
-
   # Graphs and diagrams.
 
   "graphviz",
@@ -276,10 +269,6 @@ PACKAGES_HOMEBREW_HOMEBREW = [
 
   "pandoc",
   "aspell --with-lang-en --with-lang-pt_BR",
-
-  # Backup.
-
-  "duplicity",
 
   # Password generation.
 
@@ -386,7 +375,6 @@ namespace :packages do
 end
 
 ######################################################################################################
-#
 # Compose
 
 # Prefix   Meaning
@@ -809,7 +797,6 @@ end
 directory COMPOSE_PATH
 
 ######################################################################################################
-#
 # Bash
 
 BASH_PATH = "/usr/local/bin/bash"
@@ -829,191 +816,6 @@ end
 file "/usr/local/bin/bash" => "packages:homebrew"
 
 ######################################################################################################
-#
-# Backup.
-
-BACKUP_LAPTOP = "/Users/leafac"
-BACKUP_LAPTOP_EXCLUDES = [
-  "/Downloads/",
-  "/.Trash/",
-  "/.cache/",
-  "/.local/",
-  "/Library/Caches/",
-  "/VirtualBox VMs/",
-  "/Library/Containers/com.docker.docker/",
-]
-BACKUP_STORAGE = "/Volumes/leafac-flash-drive/storage"
-BACKUP_STORAGE_LAPTOP = "#{BACKUP_STORAGE}/laptop"
-BACKUP_REMOTE = "s3+http://backup.leafac.com/storage"
-BACKUP_REMOTE_CREDENTIALS = <<-CREDENTIALS
------BEGIN PGP MESSAGE-----
-
-jA0ECQMKgygNVoKmD2j/0rgBomw2lbIcNsWFc6S8fLc+O7Rgc8ijEUUMu2VGVle4
-KNamakoJFVBkAUYt4CpSIpHDxyHHXrjkca2heBx4mNbIadfMo0QnE0w0jD6YiaeV
-sQO5zXHni0IqLClofyccdL1CWk/0XyWDE9rHD4On6t2pDQt/P5JcSFKJJMcfaSKV
-mHuSRtYhP0BqN/8gvoV58LSi1FV7yes7HF1ol2ElgQ45xW/Ll5JRT/G7cZOtyB7j
-ssFKJ3QI/oL0
-=HcwM
------END PGP MESSAGE-----
-CREDENTIALS
-BACKUP_REMOTE_FULL_EVERY = "6M"
-BACKUP_REMOTE_TEST_FILE = "laptop/Code/laptop/Rakefile"
-BACKUP_REMOTE_TEST_PATH = "#{Dir.home}/Downloads/Rakefile"
-
-desc "Backup laptop, storage and ‘leafac.com’."
-task backup: ["backup:laptop", "backup:storage", "backup:leafac.com"]
-
-namespace :backup do
-
-  desc "Backup laptop to storage."
-  task laptop: [BACKUP_LAPTOP, BACKUP_STORAGE] do
-    sh(<<-COMMAND.to_command) {}
-      rsync -av
-            --delete
-            --progress
-            #{BACKUP_LAPTOP_EXCLUDES.map { |exclude| "--exclude '#{exclude}'" }.join(" ") }
-            '#{BACKUP_LAPTOP}/'
-            '#{BACKUP_STORAGE_LAPTOP}/'
-    COMMAND
-  end
-
-  desc "Backup storage to remote."
-  task storage: BACKUP_STORAGE do
-    sh backup_remote_credentials, <<-COMMAND.to_command
-      ulimit -n 1024 &&
-      duplicity --allow-source-mismatch
-                --full-if-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
-                --progress
-                '#{BACKUP_STORAGE}'
-                '#{BACKUP_REMOTE}'
-    COMMAND
-  end
-
-  namespace :storage do
-
-    desc "Restore storage."
-    task :restore, [:path] do |t, args|
-      path = args[:path]
-      if path.nil? || path.blank?
-        abort "Path not given."
-      end
-      if File.exists? path
-        abort "Path ‘#{path}’ already exists."
-      end
-
-      sh backup_remote_credentials, <<-COMMAND.to_command
-        ulimit -n 1024 &&
-        duplicity restore --progress '#{BACKUP_REMOTE}' '#{path}'
-      COMMAND
-    end
-
-    desc "Verify restored storage."
-    task :verify, [:path] do |t, args|
-      path = args[:path]
-      if path.nil? || path.blank?
-        abort "Path not given."
-      end
-      if ! File.exists? path
-        abort "Path ‘#{path}’ does not exist."
-      end
-
-      sh backup_remote_credentials, <<-COMMAND.to_command
-        ulimit -n 1024 &&
-        duplicity verify '#{BACKUP_REMOTE}' '#{path}'
-      COMMAND
-    end
-  end
-
-  namespace :remote do
-
-    desc "Describe remote status."
-    task :status do
-      sh backup_remote_credentials, <<-COMMAND.to_command
-        ulimit -n 1024 &&
-        duplicity collection-status '#{BACKUP_REMOTE}'
-      COMMAND
-    end
-
-    desc "List remote files."
-    task :list do
-      sh backup_remote_credentials, <<-COMMAND.to_command
-        ulimit -n 1024 &&
-        duplicity list-current-files '#{BACKUP_REMOTE}'
-      COMMAND
-    end
-
-    desc "Clean up old backups in remote."
-    task :clean do
-      sh backup_remote_credentials, <<-COMMAND.to_command
-        ulimit -n 1024 &&
-        duplicity remove-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
-                  --force
-                  '#{BACKUP_REMOTE}'
-      COMMAND
-    end
-
-    namespace :clean do
-
-      desc "List which backups ‘backup:remote:clean’ would remove."
-      task "dry-run" do
-        sh backup_remote_credentials, <<-COMMAND.to_command
-          ulimit -n 1024 &&
-          duplicity remove-older-than '#{BACKUP_REMOTE_FULL_EVERY}'
-                    '#{BACKUP_REMOTE}'
-        COMMAND
-      end
-    end
-
-    desc "Test backup in remote."
-    task :test do
-      sh backup_remote_credentials, <<-COMMAND.to_command
-        ulimit -n 1024 &&
-        duplicity restore
-                  --file-to-restore '#{BACKUP_REMOTE_TEST_FILE}'
-                  '#{BACKUP_REMOTE}'
-                  '#{BACKUP_REMOTE_TEST_PATH}'
-      COMMAND
-      sh "less '#{BACKUP_REMOTE_TEST_PATH}'"
-    end
-  end
-
-  desc "Backup ‘leafac.com’."
-  task "leafac.com" do
-    sh <<-COMMAND.to_command
-      ssh leafac.com
-        'cd leafac.com &&
-         docker-compose -f docker-compose.yml
-                        -f docker-compose.administration.yml
-                        build administration &&
-         docker-compose -f docker-compose.yml
-                        -f docker-compose.administration.yml
-                        run --rm
-                        #{backup_remote_credentials.map { |(key, value)| "-e #{key}=#{value.shellescape}"}.join(" ") }
-                        administration make backup'
-    COMMAND
-  end
-
-  file BACKUP_LAPTOP do
-    abort "Laptop not found at ‘#{BACKUP_LAPTOP}’."
-  end
-
-  file BACKUP_STORAGE do
-    abort "Storage not found at ‘#{BACKUP_STORAGE}’."
-  end
-
-  def backup_remote_credentials
-    @backup_remote_credentials ||= begin
-      output, status = Open3.capture2 "gpg --decrypt --output - -", stdin_data: BACKUP_REMOTE_CREDENTIALS
-      unless status == 0
-        abort "Failed to unlock remote credentials."
-      end
-      YAML.load output
-    end
-  end
-end
-
-######################################################################################################
-#
 # Hosts
 
 HOSTS_REMOTE = "http://someonewhocares.org/hosts/hosts"
@@ -1036,7 +838,6 @@ REQUIRED_ENTRIES
 end
 
 ######################################################################################################
-#
 # GUI ‘$PATH’
 
 GUI_PATH_PATHS = [
@@ -1056,14 +857,7 @@ task "gui-path" do
 end
 
 ######################################################################################################
-#
 # Auxiliary
-
-class String
-  def to_command
-    gsub(/\n\s+/, " ").strip
-  end
-end
 
 def install_file path, content
   if ! File.exists?(path) || File.read(path) != content
