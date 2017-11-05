@@ -236,6 +236,7 @@ PACKAGES_HOMEBREW_HOMEBREW = [
   "ntfs-3g",
   "ext2fuse",
   "ext4fuse",
+  "e2fsprogs",
 
   # Networking.
 
