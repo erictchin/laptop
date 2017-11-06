@@ -127,10 +127,6 @@ PACKAGES_HOMEBREW_CASK = [
 
   "racket",
 
-  ## Arduino.
-
-  "arduino",
-
   # Fonts.
 
   "font-fontawesome",
