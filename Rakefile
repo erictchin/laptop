@@ -118,6 +118,7 @@ PACKAGES_HOMEBREW_CASK = [
 
   "mactex",
   "skim",
+  "adobe-acrobat-reader",
   "detexify",
   "microsoft-office",
 
