@@ -43,7 +43,7 @@ PACKAGES_HOMEBREW_CASK = [
   # Filesystem.
 
   "osxfuse",
-  "android-file-transfer",
+  # "android-file-transfer",
 
   # Networking.
 
@@ -54,15 +54,15 @@ PACKAGES_HOMEBREW_CASK = [
   # Internet browsing.
 
   "firefox",
-  "flash-npapi",
+  # "flash-npapi",
   "google-chrome",
-  "torbrowser",
+  # "torbrowser",
 
   # Instant messaging.
 
   "skype",
   "google-hangouts",
-  "mattermost",
+  # "mattermost",
   "slack",
 
   # Desktop utils.
@@ -75,14 +75,14 @@ PACKAGES_HOMEBREW_CASK = [
   "cool-retro-term",
   "free-ruler",
   "unicodechecker",
-  "zotero",
+  # "zotero",
   "day-o",
   "color-oracle",
   "cyberduck",
 
   # Drivers.
 
-  "darwiinremoteosc",
+  # "darwiinremoteosc",
 
   # Text editing.
 
@@ -98,16 +98,16 @@ PACKAGES_HOMEBREW_CASK = [
 
   # Graphs and diagrams.
 
-  "yed",
+  # "yed",
 
   # Backup.
 
-  "backblaze",
+  # "backblaze",
 
   # Vector graphics.
 
-  "xquartz",
-  "inkscape",
+  # "xquartz",
+  # "inkscape",
 
   # Virtualization.
 
@@ -116,10 +116,10 @@ PACKAGES_HOMEBREW_CASK = [
 
   # Writing.
 
-  "mactex",
-  "skim",
-  "detexify",
-  "microsoft-office",
+  # "mactex",
+  # "skim",
+  # "detexify",
+  # "microsoft-office",
 
   # Programming languages.
 
@@ -248,9 +248,9 @@ PACKAGES_HOMEBREW_HOMEBREW = [
   "cloc",
   "tree",
   "pstree",
-  "figlet",
+  # "figlet",
   "the_silver_searcher",
-  "ffmpeg",
+  # "ffmpeg",
   "youtube-dl",
   "timelimit",
   "watch",
@@ -258,10 +258,10 @@ PACKAGES_HOMEBREW_HOMEBREW = [
 
   # Graphs and diagrams.
 
-  "graphviz",
-  "ditaa",
-  "plantuml",
-  "imagemagick",
+  # "graphviz",
+  # "ditaa",
+  # "plantuml",
+  # "imagemagick",
 
   # Writing.
 
@@ -282,6 +282,7 @@ PACKAGES_HOMEBREW_HOMEBREW = [
   ## Python.
 
   "python",
+  "python3",
 
   ## OCaml.
 
