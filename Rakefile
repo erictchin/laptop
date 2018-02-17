@@ -35,54 +35,34 @@ end
 PACKAGES_HOMEBREW_TAPS = [
   "caskroom/cask",
   "caskroom/fonts",
-  "caskroom/drivers",
 ]
 
 PACKAGES_HOMEBREW_CASK = [
 
-  # Filesystem.
+  # Filesystem and Networking
 
-  "osxfuse",
-  # "android-file-transfer",
-
-  # Networking.
-
-  "transmission",
   "wireshark",
   "postman",
 
   # Internet browsing.
 
-  "firefox",
-  # "flash-npapi",
-  "google-chrome",
-  # "torbrowser",
+  # "firefox",
+  # "google-chrome",
 
-  # Instant messaging.
+  # Instant messaging and chat
 
-  "skype",
-  "google-hangouts",
-  # "mattermost",
+  # "skype",
+  # "google-hangouts",
   "slack",
+  "zoomus",
 
   # Desktop utils.
 
-  "shiftit",
+  # "shiftit",
+  # "divvy",
   "the-unarchiver",
-  "grandperspective",
-  "licecap",
-  "keycastr",
-  "cool-retro-term",
-  "free-ruler",
-  "unicodechecker",
-  # "zotero",
-  "day-o",
-  "color-oracle",
-  "cyberduck",
-
-  # Drivers.
-
-  # "darwiinremoteosc",
+  # "cyberduck",
+  "iterm2",
 
   # Text editing.
 
@@ -95,19 +75,6 @@ PACKAGES_HOMEBREW_CASK = [
   # Audio and video.
 
   "vlc",
-
-  # Graphs and diagrams.
-
-  # "yed",
-
-  # Backup.
-
-  # "backblaze",
-
-  # Vector graphics.
-
-  # "xquartz",
-  # "inkscape",
 
   # Virtualization.
 
@@ -225,14 +192,17 @@ PACKAGES_HOMEBREW_CASK = [
 
 PACKAGES_HOMEBREW_HOMEBREW = [
 
+  "openssl",
+  "gnupg"
+
   # Filesystem.
 
-  "bindfs",
-  "sshfs",
-  "ntfs-3g",
-  "ext2fuse",
-  "ext4fuse",
-  "e2fsprogs",
+  # "bindfs",
+  # "sshfs",
+  # "ntfs-3g",
+  # "ext2fuse",
+  # "ext4fuse",
+  # "e2fsprogs",
 
   # Networking.
 
@@ -248,29 +218,13 @@ PACKAGES_HOMEBREW_HOMEBREW = [
   "cloc",
   "tree",
   "pstree",
-  # "figlet",
   "the_silver_searcher",
-  # "ffmpeg",
   "youtube-dl",
   "timelimit",
   "watch",
   "rlwrap",
-
-  # Graphs and diagrams.
-
-  # "graphviz",
-  # "ditaa",
-  # "plantuml",
-  # "imagemagick",
-
-  # Writing.
-
-  "pandoc",
-  "aspell --with-lang-en --with-lang-pt_BR",
-
-  # Password generation.
-
-  "pwgen",
+  "jq",
+  "vim",
 
   # Programming languages.
 
@@ -284,10 +238,6 @@ PACKAGES_HOMEBREW_HOMEBREW = [
   "python",
   "python3",
 
-  ## OCaml.
-
-  "ocaml",
-  "opam",
 ]
 
 PACKAGES_RACKET = [
@@ -299,18 +249,12 @@ PACKAGES_PYTHON = [
   "pygments",
 ]
 
-PACKAGES_OCAML = [
-  "merlin",
-  "ocp-indent",
-  "utop",
-]
 
 desc "Install packages."
 task packages: [
   "packages:homebrew",
   "packages:racket",
   "packages:python",
-  "packages:ocaml",
 ]
 
 namespace :packages do
@@ -370,7 +314,6 @@ namespace :packages do
 
   package_manager "Python", PACKAGES_PYTHON, "pip list --format=legacy", "pip install"
 
-  package_manager "OCaml", PACKAGES_OCAML, "opam list --short", "opam install --yes"
 end
 
 ######################################################################################################
