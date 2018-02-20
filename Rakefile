@@ -8,26 +8,11 @@ require "shellwords"
 
 desc "Install all features."
 task default: [
-  :laptop,
   :packages,
+  :compose,
   :bash,
-  :hosts
 ]
 
-######################################################################################################
-# Laptop
-
-LAPTOP_PATH = "/usr/local/bin/laptop"
-
-desc "Install ‘laptop’ executable."
-task :laptop do
-  install_file LAPTOP_PATH, <<-LAPTOP do
-#!/usr/bin/env bash
-(cd '#{File.expand_path("..", __FILE__)}' && rake $@)
-LAPTOP
-    chmod "a+x", LAPTOP_PATH
-  end
-end
 
 ######################################################################################################
 # Packages
@@ -44,25 +29,19 @@ PACKAGES_HOMEBREW_CASK = [
   "wireshark",
   "postman",
 
-  # Internet browsing.
-
-  # "firefox",
-  # "google-chrome",
-
   # Instant messaging and chat
 
   # "skype",
   # "google-hangouts",
-  "slack",
-  "zoomus",
+  # "slack",
+  # "zoomus",
 
   # Desktop utils.
 
   # "shiftit",
   # "divvy",
   "the-unarchiver",
-  # "cyberduck",
-  "iterm2",
+  #{ }"iterm2",
 
   # Text editing.
 
@@ -80,13 +59,6 @@ PACKAGES_HOMEBREW_CASK = [
 
   "virtualbox",
   "docker",
-
-  # Writing.
-
-  # "mactex",
-  # "skim",
-  # "detexify",
-  # "microsoft-office",
 
   # Programming languages.
 
@@ -126,20 +98,12 @@ PACKAGES_HOMEBREW_CASK = [
   "font-pt-sans",
   "font-pt-serif",
   "font-lora",
-  "font-droid-sans",
-  "font-droid-sans-mono",
-  "font-droid-serif",
-  "font-ubuntu",
   "font-merriweather",
   "font-merriweather-sans",
   "font-noto-sans",
   "font-noto-emoji",
   "font-noto-serif",
   "font-inconsolata",
-  "font-alegreya",
-  "font-alegreya-sc",
-  "font-alegreya-sans",
-  "font-alegreya-sans-sc",
   "font-exo",
   "font-exo2",
   "font-fira-code",
@@ -151,15 +115,8 @@ PACKAGES_HOMEBREW_CASK = [
   "font-andada-sc",
   "font-abril-fatface",
   "font-cardo",
-  "font-gentium-basic",
-  "font-gentium-book-basic",
-  "font-gentium-plus",
   "font-libre-baskerville",
-  "font-playfair-display",
-  "font-playfair-display-sc",
   "font-gravitas-one",
-  "font-old-standard-tt",
-  "font-hasklig",
   "font-monoid",
   "font-monoisome",
   "font-iosevka",
@@ -178,29 +135,19 @@ PACKAGES_HOMEBREW_CASK = [
   "font-tangerine",
   "font-anonymous-pro",
   "font-everson-mono",
-  "font-gnu-unifont",
   "font-andika",
   "font-cooper-hewitt",
   "font-nunito",
   "font-space-mono",
   "font-metropolis",
-  "font-euphoria-script",
-  "font-interface",
 ]
 
 PACKAGES_HOMEBREW_HOMEBREW = [
 
+  # Crypto
+
   "openssl",
-  "gnupg"
-
-  # Filesystem.
-
-  # "bindfs",
-  # "sshfs",
-  # "ntfs-3g",
-  # "ext2fuse",
-  # "ext4fuse",
-  # "e2fsprogs",
+  "gnupg",
 
   # Networking.
 
@@ -217,12 +164,11 @@ PACKAGES_HOMEBREW_HOMEBREW = [
   "tree",
   "pstree",
   "the_silver_searcher",
-  "youtube-dl",
-  "timelimit",
   "watch",
   "rlwrap",
   "jq",
   "vim",
+  "tmux",
 
   # Programming languages.
 
@@ -239,7 +185,7 @@ PACKAGES_HOMEBREW_HOMEBREW = [
 ]
 
 PACKAGES_RACKET = [
-  "drracket-solarized",
+  #{ }"drracket-solarized",
 ]
 
 PACKAGES_PYTHON = [
@@ -315,6 +261,393 @@ namespace :packages do
 end
 
 ######################################################################################################
+# Compose
+
+# Prefix   Meaning
+# ~        ⌥ Option key
+# $        ⇧ Shift key
+# ^        ^ Control key
+# @        ⌘ Command key
+# #        keys on number pad
+
+# Key                        Code
+# ⎋ Esc                      \\U001B
+# ⌫ Backspace/delete         \\U007F
+# ⇥ Tab                      \\U0009
+# ↩ Enter/Return           \\U000D
+# ⌤ Enter (on number-pad)    \\U0003
+# ↑ up arrow                 \\UF700
+# ↓ down arrow               \\UF701
+# ← left arrow               \\UF702
+# → right arrow              \\UF703
+# ↖ Home                   \\UF729
+# ↘ End                    \\UF72B
+# ⇞ Page Up                  \\UF72C
+# ⇟ Page Down                \\UF72D
+# Insert                     \\UF727
+# ⌦ Delete (forward delete)  \\UF728
+# ⌧ NumLock/clear           \\UF739
+# F1                         \\UF704
+# F2                         \\UF705
+# F3                         \\UF706
+# F4                         \\UF707
+# F5                         \\UF708
+# F6                         \\UF709
+# F7                         \\UF70A
+# F8                         \\UF70B
+# F9                         \\UF70C
+# F10                        \\UF70D
+# F11                        \\UF70E
+# F12                        \\UF71F
+# F13                        \\UF710
+# F14                        \\UF711
+# F15                        \\UF712
+# ⎙ PrintScreen              \\UF72E
+# ScrollLock                 \\UF72F
+# Pause                      \\UF730
+# SysReq                     \\UF731
+# Break                      \\UF732
+# Reset                      \\UF733
+# Stop                       \\UF734
+# Menu                       \\UF735
+# ↶ Undo                     \\UF743
+# ↷ Redo                     \\UF744
+# Find                       \\UF745
+# Help                       \\UF746
+
+# http://xahlee.info/kbd/osx_keybinding_key_syntax.html
+
+COMPOSE_MAPPINGS = {
+  "\\UF729"  => ["moveToBeginningOfLine:"],
+  "\\UF72B"  => ["moveToEndOfLine:"],
+  "$\\UF729" => ["moveToBeginningOfLineAndModifySelection:"],
+  "$\\UF72B" => ["moveToEndOfLineAndModifySelection:"],
+  "~a" => {
+    "$\\UF701" => "⇓",
+    "Downarrow" => "⇓",
+    "nwarrow" => "↖",
+    "\\UF701" => "↓",
+    "downarrow" => "↓",
+    "$\\UF703" => "⇒",
+    "Rightarrow" => "⇒",
+    "\\UF703" => "→",
+    "rightarrow" => "→",
+    "~\\UF703" => "↦",
+    "|->" => "↦",
+    "mapsto" => "↦",
+    "<-|" => "↤",
+    "reversemapsto" => "↤",
+    "searrow" => "↘",
+    "swarrow" => "↙",
+    "\\UF702" => "←",
+    "leftarrow" => "←",
+    "\\UF700" => "↑",
+    "uparrow" => "↑",
+    "$\\UF702" => "⇐",
+    "Leftarrow" => "⇐",
+    "$\\UF700" => "⇑",
+    "Uparrow" => "⇑",
+    "~\\UF702" => "⇔",
+    "Leftrightarrow" => "⇔",
+    "updownarrow" => "↕",
+    "leftrightarrow" => "↔",
+    "nearrow" => "↗",
+    "~\\UF700" => "⇕",
+    "Updownarrow" => "⇕",
+    "$~\\UF702" => "⇇",
+    "doubleleftarrow" => "⇇",
+    "$~\\UF703" => "⇉",
+    "doublerightarrow" => "⇉",
+    "aleph" => "א",
+    "'" => "′",
+    "prime" => "′",
+    "emptyset" => "∅",
+    "nabla" => "∇",
+    "suit" => {
+      "spade" => "♠",
+      "club" => "♣",
+      "heart" => "♥",
+      "diamond" => "♦",
+    },
+    "sharp" => "♯",
+    "flat" => "♭",
+    "natural" => "♮",
+    "surd" => "√",
+    "neg" => "¬",
+    "triangleup" => "△",
+    "forall" => "∀",
+    "exists" => "∃",
+    "circ" => "∘",
+    "alpha" => "α",
+    "theta" => "θ",
+    "tau" => "τ",
+    "beta" => "β",
+    "vartheta" => "ϑ",
+    "pi" => "π",
+    "upsilon" => "υ",
+    "gamma" => "γ",
+    "varpi" => "ϖ",
+    "phi" => "φ",
+    "delta" => "δ",
+    "kappa" => "κ",
+    "rho" => "ρ",
+    "varphi" => "ϕ",
+    "epsilon" => "ϵ",
+    "lambda" => "λ",
+    "varrho" => "ϱ",
+    "chi" => "χ",
+    "varepsilon" => "ε",
+    "mu" => "μ",
+    "sigma" => "σ",
+    "psi" => "ψ",
+    "zeta" => "ζ",
+    "nu" => "ν",
+    "varsigma" => "ς",
+    "omega" => "ω",
+    "eta" => "η",
+    "xi" => "ξ",
+    "iota" => "ι",
+    "Gamma" => "Γ",
+    "Lambda" => "Λ",
+    "Sigma" => "Σ",
+    "Psi" => "Ψ",
+    "Delta" => "Δ",
+    "Xi" => "Ξ",
+    "Upsilon" => "Υ",
+    "Omega" => "Ω",
+    "Theta" => "Θ",
+    "Pi" => "Π",
+    "Phi" => "Φ",
+    "pm" => "±",
+    "cap" => "∩",
+    "diamond" => "◇",
+    "oplus" => "⊕",
+    "mp" => "∓",
+    "cup" => "∪",
+    "bigtriangleup" => "△",
+    "ominus" => "⊖",
+    "times" => "×",
+    "uplus" => "⊎",
+    "bigtriangledown" => "▽",
+    "otimes" => "⊗",
+    "div" => "÷",
+    "sqcap" => "⊓",
+    "triangleright" => "▹",
+    "oslash" => "⊘",
+    "ast" => "∗",
+    "sqcup" => "⊔",
+    "vee" => "∨",
+    "lor" => "∨",
+    "wedge" => "∧",
+    "land" => "∧",
+    "triangleleft" => "◃",
+    "odot" => "⊙",
+    "star" => "★",
+    "dagger" => "†",
+    "bullet" => "•",
+    "whitebullet" => "◦",
+    "ddagger" => "‡",
+    "wr" => "≀",
+    "amalg" => "⨿",
+    "leq" => "≤",
+    "geq" => "≥",
+    "equiv" => "≡",
+    "|=" => "⊨",
+    "models" => "⊨",
+    "prec" => "≺",
+    "succ" => "≻",
+    "dotprec" => "⋖",
+    "dotsucc" => "⋗",
+    "sim" => "∼",
+    "perp" => "⊥",
+    "bot" => "⊥",
+    "top" => "⊤",
+    "eqprec" => "≼",
+    "eqsucc" => "≽",
+    "eqsim" => "≃",
+    "ll" => "≪",
+    "gg" => "≫",
+    "asymp" => "≍",
+    "||" => "∥",
+    "parallel" => "∥",
+    "subset" => "⊂",
+    "supset" => "⊃",
+    "approx" => "≈",
+    "bowtie" => "⋈",
+    "halfbowtie" => {
+      "left" => "⋉",
+      "right" => "⋊",
+    },
+    "eqsubset" => "⊆",
+    "eqsupset" => "⊇",
+    "congruent" => "≅",
+    "reversecongruent" => "≌",
+    "sqsubsetb" => "⊏",
+    "sqsupsetb" => "⊐",
+    "neq" => "≠",
+    "smile" => "⌣",
+    "eqsqsubset" => "⊑",
+    "eqsqsupset" => "⊒",
+    "doteq" => "≐",
+    "frown" => "⌢",
+    "in" => "∈",
+    "ni" => "∋",
+    "notin" => "∉",
+    "propto" => "∝",
+    "vdash" => "⊢",
+    "dashv" => "⊣",
+    "." => "·",
+    "sum" => "∑",
+    "prod" => "∏",
+    "coprod" => "∐",
+    "Int" => "∫",
+    "oint" => "∮",
+    "sqrt" => "√",
+    "skull" => "☠",
+    ":)" => "😀",
+    ":D" => "😁",
+    "+1" => "👍",
+    "-1" => "👎",
+    ":P" => "😛",
+    ":(" => "☹️",
+    ";)" => "😉",
+    ":*" => "😘",
+    "tada" => "🎉",
+    "l/" => "ł",
+    "vdots" => "⋮",
+    "ddots" => "⋱",
+    "cdots" => "⋯",
+    "hdots" => "⋯",
+    "langle" => "⟨",
+    "rangle" => "⟩",
+    "heart" => "❤",
+    "note" => {
+      "quarter" => "♩",
+      "eigth" => "♪",
+      "beamedeigth" => "♫",
+      "beamedsixteenth" => "♬",
+    },
+    "check" => "✓",
+    "(|" => "◖",
+    "|)" => "◗",
+    "semicircle" => {
+      "left" => "◖",
+      "right" => "◗",
+    },
+    "$`" => "≁",
+    "nottilde" => "≁",
+    "ell" => "ℓ",
+    "B" => {
+      "n" => "ℕ",
+      "p" => "ℙ",
+      "r" => "ℝ",
+      "z" => "ℤ",
+    },
+    "{" => "⌈",
+    "leftceiling" => "⌈",
+    "}" => "⌉",
+    "rightceiling" => "⌉",
+    "[" => "⌊",
+    "leftfloor" => "⌊",
+    "]" => "⌋",
+    "rightfloor" => "⌋",
+    "option" => "⌥",
+    "shift" => "⇧",
+    "command" => "⌘",
+    "compose" => "⎄",
+  },
+}
+COMPOSE_PATH = "#{Dir.home}/Library/KeyBindings"
+COMPOSE_FILE = "#{COMPOSE_PATH}/DefaultKeyBinding.dict"
+
+desc "Install ‘compose’."
+task compose: COMPOSE_PATH do
+  def compose_render node
+    compose_to_s(compose_decompose(node))
+  end
+
+  def compose_decompose node
+    case node
+    when Array, {} then node
+    when String, {} then node
+    when Hash
+      pivot, node_child_pivot = node.first
+      if pivot.empty?
+        compose_decompose node_child_pivot
+      else
+        pivot_first, _ = compose_combination_split pivot
+        included, rest = node.partition { |(combination, _)|
+          combination_first, _ = compose_combination_split combination
+          combination_first == pivot_first
+        }
+        included = included.map { |(combination, node_child)|
+          _, combination_rest = compose_combination_split combination
+          [combination_rest, node_child]
+        }
+        included = Hash[included]
+        rest = Hash[rest]
+        {
+          pivot_first => compose_decompose(included)
+        }.merge(compose_decompose rest)
+      end
+    end
+  end
+
+  def compose_to_s node
+    case node
+    when Array then %Q{"#{node.pop}"}
+    when String then %Q{("insertText:","#{node}")}
+    when Hash
+      "{" +
+      node.map { |(combination, node_child)| %Q{"#{combination}"=#{compose_to_s node_child};} }.join +
+      "}"
+    end
+  end
+
+  def compose_combination_split combination
+    combination_first, combination_rest =
+      if %w{~ $ ^ @ #}.include? combination[0]
+        combination_first, combination_rest = combination[1..-1]
+        [combination[0] + combination_first, combination_rest]
+      elsif combination[0..1] == '\\U'
+        [combination[0..5], combination[6..-1]]
+      else
+        [combination[0], combination[1..-1]]
+      end
+    [combination_first, combination_rest || ""]
+  end
+
+  def compose_combination_all_combinations node
+    case node
+    when Array then [""]
+    when String then [""]
+    when Hash
+      node.map { |(combination, node_child)|
+        compose_combination_all_combinations(node_child)
+          .map { |node_child_combination| combination + node_child_combination }
+      }.reduce(:+)
+    end
+  end
+
+  def compose_combination_ambiguous_prefixes combinations
+    combinations.product(combinations).select { |(combination_1, combination_2)|
+      combination_1 != combination_2 && combination_2.start_with?(combination_1)
+    }
+  end
+
+  ambiguous_prefixes = compose_combination_ambiguous_prefixes(compose_combination_all_combinations(COMPOSE_MAPPINGS))
+  if ambiguous_prefixes.any?
+    abort "Compose: The following combinations are ambiguous prefixes: #{ambiguous_prefixes}"
+  end
+
+  install_file COMPOSE_FILE, compose_render(COMPOSE_MAPPINGS) do
+    puts "Reopen applications for the new compose combinations to take effect."
+  end
+end
+
+directory COMPOSE_PATH
+
+######################################################################################################
 # Bash
 
 BASH_PATH = "/usr/local/bin/bash"
@@ -322,7 +655,7 @@ BASH_SHELLS = "/etc/shells"
 
 desc "Install Bash configuration."
 task bash: "/usr/local/bin/bash" do
-  _, status = Open3.capture2e "grep '#{BASH_PATH}' '#{BASH_SHELLS}'"
+  _, statusa = Open3.capture2e "grep '#{BASH_PATH}' '#{BASH_SHELLS}'"
   unless status == 0
     sh %Q{sudo -u root bash -c "echo '#{BASH_PATH}' >> '#{BASH_SHELLS}'"}
   end
@@ -334,28 +667,6 @@ end
 file "/usr/local/bin/bash" => "packages:homebrew"
 
 ######################################################################################################
-# Hosts
-
-HOSTS_REMOTE = "http://someonewhocares.org/hosts/hosts"
-HOSTS_LOCAL = "/etc/hosts"
-
-desc "Update ‘#{HOSTS_LOCAL}’."
-task :hosts do
-  sh %Q{sudo -u root bash -c "curl -L '#{HOSTS_REMOTE}' > '#{HOSTS_LOCAL}'"}
-  puts <<-REQUIRED_ENTRIES
-Inspect required entries:
-
-  127.0.0.1 localhost
-  255.255.255.255 broadcasthost
-  ::1 localhost
-
-Press any key to continue...
-REQUIRED_ENTRIES
-  STDIN.gets
-  sh "less '#{HOSTS_LOCAL}'"
-end
-
-######################################################################################################
 # GUI ‘$PATH’
 
 GUI_PATH_PATHS = [
@@ -364,8 +675,6 @@ GUI_PATH_PATHS = [
   "/bin",
   "/usr/sbin",
   "/sbin",
-  "/opt/X11/bin",
-  "/Library/TeX/texbin",
 ]
 
 desc "Fix ‘$PATH’ environment variable for GUI applications."
